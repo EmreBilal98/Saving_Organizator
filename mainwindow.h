@@ -11,13 +11,12 @@
 #include "database.h"
 #include "adddialog.h"
 #include "currency.h"
+#include "removedialog.h"
 
 
-// enum CurrencyType {
-//     USD,
-//     EUR,
-//     UNKNOWN
-// };
+enum StackedWidgetIdex{
+    LOGIN,USER,SIGNUP
+};
 
 
 QT_BEGIN_NAMESPACE
@@ -40,9 +39,18 @@ private slots:
 
     void on_actionAdd_Saving_triggered();
 
+    void on_actionRemove_Saving_triggered();
+
+    void on_stackedWidget_currentChanged(int arg1);
+
+    void on_btnsuLogIn_clicked();
+
+    void on_actionLog_Out_triggered();
+
 private:
     Ui::MainWindow *ui;
     Database db;
+    QMap<QString,double> prices;
     QStandardItemModel model;
     QString m_username,m_password;
 
@@ -50,9 +58,7 @@ private:
     void errorExceptions(int &error);
     void setModel();
     QMap<QString,double> currencyCheck(const QString &base, const QStringList &target);
-    // QString currencyToString(CurrencyType currency);
-    // CurrencyType stringToCurrency(const QString &currencyStr);
+    void enableActions(StackedWidgetIdex widgetIndex);
 
-    // QStringList currencyToStringList(QList<int> currencies);
 };
 #endif // MAINWINDOW_H

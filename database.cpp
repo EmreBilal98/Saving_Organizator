@@ -110,7 +110,7 @@ bool Database::searchValue(QString column, QString value)
 
 }
 
-bool Database::setValue(QString username, QString password,int currency, double value)
+bool Database::setValue(QString username, QString password,int currency, double value,bool transaction)
 {
     if(!db.isOpen()) openDB();
     QSqlQuery query;
@@ -128,7 +128,10 @@ bool Database::setValue(QString username, QString password,int currency, double 
             double amount=query.value(0).toDouble();
             qInfo()<<amount;
             qInfo()<<value;
+            if(transaction)
             amount+=value;
+            else
+            amount-=value;
             qInfo()<<amount;
             QString cmd = "UPDATE `users` SET SavingAmount=:SavingAmount WHERE username=:username AND currencyType=:currency;";
             query.prepare(cmd);
@@ -174,7 +177,7 @@ bool Database::setValue(QString username, QString password,int currency, double 
 
 QString Database::getValue(QString username,int currency,QString column)
 {
-    if(!db.isOpen()) openDB();
+    //if(!db.isOpen()) openDB();
     QString cmd = QString("SELECT %0 FROM `users` WHERE  username=:username AND currencyType=:currency;").arg(column);
     QSqlQuery query;
     query.prepare(cmd);

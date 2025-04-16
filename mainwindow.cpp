@@ -19,10 +19,15 @@ void MainWindow::login()
     if(db.searchValue("username",ui->lineUsername->text()) && db.searchValue("password",ui->linePassword->text())){
         m_username=ui->lineUsername->text();
         m_password=ui->linePassword->text();
+        ui->lineUsername->clear();
+        ui->linePassword->clear();
+
+
         setModel();
 
-        ui->actionAdd_Saving->setEnabled(true);
-        ui->stackedWidget->setCurrentIndex(1);
+        //ui->actionAdd_Saving->setEnabled(true);
+
+        ui->stackedWidget->setCurrentIndex(USER);
     }
     else
         QMessageBox::critical(this,"Log in error","Username or password wrong");
@@ -31,12 +36,18 @@ void MainWindow::login()
 void MainWindow::signUp()
 {
 
-    ui->stackedWidget->setCurrentIndex(2);
+    ui->stackedWidget->setCurrentIndex(SIGNUP);
 
 }
 
 void MainWindow::init()
 {
+    //password lineEditlerine ggizli yazım modu verildi
+    ui->linePassword->setEchoMode(QLineEdit::Password);
+    ui->lineEdit_suPass->setEchoMode(QLineEdit::Password);
+    ui->lineEdit_suPassVerify->setEchoMode(QLineEdit::Password);
+
+
     QPushButton *btn_login=new QPushButton("Log in",this);
     QPushButton *btn_signUp=new QPushButton("Sign up",this);
 
@@ -59,7 +70,10 @@ void MainWindow::init()
 
     m_username.clear();
     m_password.clear();
-    ui->actionAdd_Saving->setEnabled(false);
+
+    ui->stackedWidget->setCurrentIndex(LOGIN);
+    on_stackedWidget_currentChanged(LOGIN);
+    //ui->actionAdd_Saving->setEnabled(false);
 
 
 
@@ -78,20 +92,19 @@ void MainWindow::setModel()
     int row=0;
     qInfo()<<db.getCurrencies(m_username);
     if(db.getCurrencies(m_username).isEmpty()) return;
-    QMap<QString,double> values=currencyCheck("TRY",Currency::currencyToStringList(db.getCurrencies(m_username)));
-    qInfo()<<values;
-    foreach(QString key,values.keys()){
+    prices=currencyCheck("TRY",Currency::currencyToStringList(db.getCurrencies(m_username)));
+    qInfo()<<prices;
+    foreach(QString key,prices.keys()){
         for(int column = 0; column < 3; ++column) {
             QStandardItem *item = new QStandardItem();
             if(!column){
                 item->setText(QString("%0").arg(key));
-                //curVal=currencyCheck("TRY",currencyToString(static_cast<CurrencyType>(currency)));
-                qInfo()<<key<<":"<<values.value(key);
+                qInfo()<<key<<":"<<prices.value(key);
             }
             else if(column==1)
                 item->setText(QString("%0").arg(db.getValue(m_username,static_cast<int>(Currency::stringToCurrency(key)),"SavingAmount")));
             else{
-                double TLBaseCurrency=1/values.value(key);
+                double TLBaseCurrency=1/prices.value(key);
                 qInfo()<<key<<":"<<TLBaseCurrency<<" Carpan::"<<(db.getValue(m_username,static_cast<int>(Currency::stringToCurrency(key)),"SavingAmount").toDouble());
                 double val=(db.getValue(m_username,static_cast<int>(Currency::stringToCurrency(key)),"SavingAmount").toDouble())*TLBaseCurrency;
                 item->setText(QString("%0").arg(val));
@@ -112,7 +125,6 @@ QMap<QString,double> MainWindow::currencyCheck(const QString &base, const QStrin
         srcCur.append(base+item);
     }
     qInfo()<<target;
-    //qInfo()<<srcCur;
     QMap<QString,double> val;
     QEventLoop loop;
     connect(api,&Currency::getValue,api,[&target,&val,&loop](QMap<QString,double> currencies){
@@ -129,38 +141,19 @@ QMap<QString,double> MainWindow::currencyCheck(const QString &base, const QStrin
     return val;
 }
 
-// QString MainWindow::currencyToString(CurrencyType currency) {
-//     switch (currency) {
-//     case CurrencyType::USD: return "USD";
-//     case CurrencyType::EUR: return "EUR";
-//     default: return "Unknown";
-//     }
-// }
+void MainWindow::enableActions(StackedWidgetIdex widgetIndex)
+{
+    if(widgetIndex==StackedWidgetIdex::USER){
+        ui->actionAdd_Saving->setEnabled(true);
+        ui->actionRemove_Saving->setEnabled(true);
+        ui->actionLog_Out->setEnabled(true);
+        return;
+    }
 
-// CurrencyType MainWindow::stringToCurrency(const QString &currencyStr) {
-//     if (currencyStr == "USD") return CurrencyType::USD;
-//     else if (currencyStr == "EUR") return CurrencyType::EUR;
-//     else return CurrencyType::UNKNOWN; // veya default bir değer
-// }
-
-// QStringList MainWindow::currencyToStringList(QList<int> currencies) {
-//     qInfo()<<currencies;
-//     QStringList result;
-//     foreach (int curInt, currencies) {
-//         CurrencyType currency=static_cast<CurrencyType>(curInt);
-//         switch (currency) {
-//         case CurrencyType::USD:
-//             result.append("USD");
-//             break;
-//         case CurrencyType::EUR:
-//             result.append("EUR");
-//             break;
-//         default: result.append("Unknown");
-//         }
-//     }
-//     return  result;
-
-// }
+    ui->actionAdd_Saving->setEnabled(false);
+    ui->actionRemove_Saving->setEnabled(false);
+    ui->actionLog_Out->setEnabled(false);
+}
 
 void MainWindow::on_btnSignUp_clicked()
 {
@@ -175,7 +168,11 @@ void MainWindow::on_btnSignUp_clicked()
         return;
     }
 
-    ui->stackedWidget->setCurrentIndex(0);
+    ui->lineEdit_suUsername->clear();
+    ui->lineEdit_suPass->clear();
+    ui->lineEdit_suPassVerify->clear();
+
+    ui->stackedWidget->setCurrentIndex(LOGIN);
 }
 
 
@@ -188,9 +185,57 @@ void MainWindow::on_actionAdd_Saving_triggered()
     qInfo()<<dlg->getCurrency();
 
 
-    qInfo()<<db.setValue(m_username,m_password,dlg->getCurrency(),dlg->getAmount());
+    qInfo()<<db.setValue(m_username,m_password,dlg->getCurrency(),dlg->getAmount(),ADD);
 
     setModel();
 
+}
+
+
+void MainWindow::on_actionRemove_Saving_triggered()
+{
+    RemoveDialog  *dlg=new RemoveDialog(this);
+    dlg->setUsername(m_username);
+    dlg->setPrices(prices);
+
+
+    int  result=dlg->exec();
+
+    if(result==RemoveDialog::Accepted){
+
+        db.setValue(m_username,m_password,static_cast<int>(Currency::stringToCurrency(dlg->getPrice().first)),dlg->getPrice().second,SUB);
+        setModel();
+    }
+
+
+
+}
+
+
+void MainWindow::on_stackedWidget_currentChanged(int arg1)
+{
+    enableActions(static_cast<StackedWidgetIdex>(arg1));
+}
+
+
+void MainWindow::on_btnsuLogIn_clicked()
+{
+    QMessageBox::StandardButton  reply;
+    reply=QMessageBox::question(this,"Are you sure?","The button will send you to  Log in sccreen",QMessageBox::Yes|QMessageBox::No);
+
+    if(reply==QMessageBox::Yes)
+    ui->stackedWidget->setCurrentIndex(LOGIN);
+}
+
+
+void MainWindow::on_actionLog_Out_triggered()
+{
+    m_username.clear();
+    m_password.clear();
+    QMessageBox::StandardButton  reply;
+    reply=QMessageBox::question(this,"Are you sure?","The button will log out you",QMessageBox::Yes|QMessageBox::No);
+
+    if(reply==QMessageBox::Yes)
+        ui->stackedWidget->setCurrentIndex(LOGIN);
 }
 

@@ -8,6 +8,11 @@
 #include <QtSql>
 #include  <QList>
 #include <QMessageBox>
+
+#define ADD true
+#define SUB false
+
+
 class Database : public QObject
 {
     Q_OBJECT
@@ -18,7 +23,7 @@ public:
 public slots:
     bool createUser(QString username,QString password,int &errorCode);
     bool searchValue(QString column,QString value);
-    bool setValue(QString username,QString password,int currency,double value);
+    bool setValue(QString username,QString password,int currency,double value,bool transaction);
     QString getValue(QString username,int currency,QString column);
     QList<int> getCurrencies(QString username);
 
