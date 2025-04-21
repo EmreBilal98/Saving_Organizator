@@ -26,6 +26,11 @@ void AddDialog::on_buttonBox_rejected()
     reject();
 }
 
+QString AddDialog::getComment() const
+{
+    return comment;
+}
+
 double AddDialog::getAmount() const
 {
     return amount;
@@ -40,7 +45,7 @@ void AddDialog::init()
 {
     currency=0;
     amount=0;
-    QStringList currencies;
+    comment.clear();
     for(int i=0;i<static_cast<int>(CurrencyType::COUNT)-1;i++){
         ui->comboBox->addItem(Currency::currencyToString(static_cast<CurrencyType>(i)));
     }
@@ -54,8 +59,7 @@ void AddDialog::save()
 {
     currency=ui->comboBox->currentIndex();
     amount=ui->doubleSpinBox->value();
-    // File file("erqut");
-    // file.addLineToFile(ui->comboBox->currentText(),amount,"fddbhdjkfbsdjfld");
+    comment=ui->cmntLine->text();
 
 }
 

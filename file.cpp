@@ -36,7 +36,7 @@ bool File::addLineToFile(QString currencyType, double currencyAmount, QString co
     data.append(QByteArray("\t"));
     data.append((transaction?QString("+").toLatin1():QString("-").toLatin1())+QString::number(currencyAmount).toLatin1());
     data.append(QByteArray("\t"));
-    data.append(comment .toLatin1());
+    data.append(comment .toUtf8());//açıklamada türkçe karakter kullanabilmek için utf8 e çevrildi
     data.append(QByteArray("\t"));
     data.append(QString::number(currencyBalance).toLatin1());
     data.append(QByteArray("\t"));

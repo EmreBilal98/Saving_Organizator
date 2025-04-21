@@ -24,8 +24,10 @@ void MainWindow::login()
 
 
         setModel();
+        file=new File(m_username);
 
         //ui->actionAdd_Saving->setEnabled(true);
+
 
         ui->stackedWidget->setCurrentIndex(USER);
     }
@@ -143,13 +145,16 @@ QMap<QString,double> MainWindow::currencyCheck(const QString &base, const QStrin
 
 void MainWindow::enableActions(StackedWidgetIdex widgetIndex)
 {
-    if(widgetIndex==StackedWidgetIdex::USER){
+    if(widgetIndex==StackedWidgetIdex::USER || widgetIndex==StackedWidgetIdex::ACTIVITIES){
+        ui->actionAccount_Activities->setEnabled((widgetIndex==StackedWidgetIdex::ACTIVITIES)?false:true);
+        ui->actionMain_Page->setEnabled((widgetIndex==StackedWidgetIdex::USER)?false:true);
         ui->actionAdd_Saving->setEnabled(true);
         ui->actionRemove_Saving->setEnabled(true);
         ui->actionLog_Out->setEnabled(true);
         return;
     }
-
+    ui->actionAccount_Activities->setEnabled(false);
+    ui->actionMain_Page->setEnabled(false);
     ui->actionAdd_Saving->setEnabled(false);
     ui->actionRemove_Saving->setEnabled(false);
     ui->actionLog_Out->setEnabled(false);
@@ -187,8 +192,7 @@ void MainWindow::on_actionAdd_Saving_triggered()
 
     qInfo()<<db.setValue(m_username,m_password,dlg->getCurrency(),dlg->getAmount(),ADD);
 
-    File file("erqut");
-    file.addLineToFile(Currency::currencyToString(static_cast<CurrencyType>(dlg->getCurrency())),dlg->getAmount(),"fddbhdjkfbsdjfld",db.getValue(m_username,dlg->getCurrency(),"SavingAmount").toDouble(),ADD);
+    file->addLineToFile(Currency::currencyToString(static_cast<CurrencyType>(dlg->getCurrency())),dlg->getAmount(),dlg->getComment(),db.getValue(m_username,dlg->getCurrency(),"SavingAmount").toDouble(),ADD);
 
 
     setModel();
@@ -209,8 +213,7 @@ void MainWindow::on_actionRemove_Saving_triggered()
 
         db.setValue(m_username,m_password,static_cast<int>(Currency::stringToCurrency(dlg->getPrice().first)),dlg->getPrice().second,SUB);
 
-        File file("erqut");
-        file.addLineToFile(dlg->getPrice().first,dlg->getPrice().second,"fddbhdjkfbsdjfld",db.getValue(m_username,static_cast<int>(Currency::stringToCurrency(dlg->getPrice().first)),"SavingAmount").toDouble(),SUB);
+        file->addLineToFile(dlg->getPrice().first,dlg->getPrice().second,dlg->getComment(),db.getValue(m_username,static_cast<int>(Currency::stringToCurrency(dlg->getPrice().first)),"SavingAmount").toDouble(),SUB);
         setModel();
     }
 
@@ -244,5 +247,23 @@ void MainWindow::on_actionLog_Out_triggered()
 
     if(reply==QMessageBox::Yes)
         ui->stackedWidget->setCurrentIndex(LOGIN);
+}
+
+
+void MainWindow::on_actionAccount_Activities_triggered()
+{
+    if(file->open(QIODevice::ReadOnly)){
+
+        ui->textEdit->setHtml(file->readAll());
+
+        file->close();
+    }
+    ui->stackedWidget->setCurrentIndex(ACTIVITIES);
+}
+
+
+void MainWindow::on_actionMain_Page_triggered()
+{
+    ui->stackedWidget->setCurrentIndex(USER);
 }
 

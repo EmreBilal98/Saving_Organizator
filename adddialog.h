@@ -4,7 +4,6 @@
 #include <QDialog>
 #include  <QStringList>
 #include  "currency.h"
-#include "file.h"
 
 namespace Ui {
 class AddDialog;
@@ -22,6 +21,8 @@ public:
 
     double getAmount() const;
 
+    QString getComment() const;
+
 private slots:
     void on_buttonBox_accepted();
 
@@ -31,6 +32,7 @@ private:
     Ui::AddDialog *ui;
     int currency;
     double amount;
+    QString comment;
 
     void init();
     void save();

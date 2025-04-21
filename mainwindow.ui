@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>555</width>
+    <width>544</width>
     <height>338</height>
    </rect>
   </property>
@@ -90,6 +90,20 @@
           </item>
           <item>
            <widget class="QTableView" name="tableView"/>
+          </item>
+         </layout>
+        </widget>
+        <widget class="QWidget" name="page_4">
+         <layout class="QGridLayout" name="gridLayout_3">
+          <item row="0" column="0">
+           <widget class="QLabel" name="label_7">
+            <property name="text">
+             <string>account activities:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="0">
+           <widget class="QTextEdit" name="textEdit"/>
           </item>
          </layout>
         </widget>
@@ -199,7 +213,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>555</width>
+     <width>544</width>
      <height>22</height>
     </rect>
    </property>
@@ -214,6 +228,8 @@
     <property name="title">
      <string>Account</string>
     </property>
+    <addaction name="actionMain_Page"/>
+    <addaction name="actionAccount_Activities"/>
     <addaction name="actionLog_Out"/>
    </widget>
    <addaction name="menuActions"/>
@@ -233,6 +249,8 @@
    <addaction name="actionAdd_Saving"/>
    <addaction name="actionRemove_Saving"/>
    <addaction name="separator"/>
+   <addaction name="actionMain_Page"/>
+   <addaction name="actionAccount_Activities"/>
    <addaction name="actionLog_Out"/>
   </widget>
   <action name="actionAdd_Saving">
@@ -263,6 +281,28 @@
    </property>
    <property name="text">
     <string>Log Out</string>
+   </property>
+   <property name="menuRole">
+    <enum>QAction::MenuRole::NoRole</enum>
+   </property>
+  </action>
+  <action name="actionAccount_Activities">
+   <property name="icon">
+    <iconset theme="scanner"/>
+   </property>
+   <property name="text">
+    <string>Account Activities</string>
+   </property>
+   <property name="menuRole">
+    <enum>QAction::MenuRole::NoRole</enum>
+   </property>
+  </action>
+  <action name="actionMain_Page">
+   <property name="icon">
+    <iconset theme="go-home"/>
+   </property>
+   <property name="text">
+    <string>Main Page</string>
    </property>
    <property name="menuRole">
     <enum>QAction::MenuRole::NoRole</enum>

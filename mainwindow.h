@@ -6,6 +6,8 @@
 #include <QPushButton>
 #include <QStandardItem>
 #include <QStandardItemModel>
+#include <QStringListModel>
+#include <QStringList>
 #include <QList>
 #include <QMap>
 #include "database.h"
@@ -16,7 +18,7 @@
 
 
 enum StackedWidgetIdex{
-    LOGIN,USER,SIGNUP
+    LOGIN,USER,ACTIVITIES,SIGNUP
 };
 
 
@@ -48,12 +50,18 @@ private slots:
 
     void on_actionLog_Out_triggered();
 
+    void on_actionAccount_Activities_triggered();
+
+    void on_actionMain_Page_triggered();
+
 private:
     Ui::MainWindow *ui;
     Database db;
     QMap<QString,double> prices;
     QStandardItemModel model;
+    QStringList activities;
     QString m_username,m_password;
+    File *file;
 
     void init();
     void errorExceptions(int &error);

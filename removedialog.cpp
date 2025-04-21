@@ -6,6 +6,7 @@ RemoveDialog::RemoveDialog(QWidget *parent)
     , ui(new Ui::RemoveDialog)
 {
     ui->setupUi(this);
+    comment.clear();
     price.first=="";
     price.second=0;
 }
@@ -40,6 +41,7 @@ void RemoveDialog::save()
 {
     price.first=ui->comboBox->currentText();
     price.second=ui->doubleSpinBox->value();
+    comment=ui->cmntLine->text();
 }
 
 void RemoveDialog::on_comboBox_currentTextChanged(const QString &arg1)
@@ -73,6 +75,11 @@ void RemoveDialog::on_buttonBox_accepted()
 void RemoveDialog::on_buttonBox_rejected()
 {
     reject();
+}
+
+QString RemoveDialog::getComment() const
+{
+    return comment;
 }
 
 QPair<QString, double> RemoveDialog::getPrice() const
