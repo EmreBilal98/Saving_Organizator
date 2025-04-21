@@ -12,6 +12,7 @@
 #include "adddialog.h"
 #include "currency.h"
 #include "removedialog.h"
+#include "file.h"
 
 
 enum StackedWidgetIdex{

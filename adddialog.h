@@ -4,6 +4,7 @@
 #include <QDialog>
 #include  <QStringList>
 #include  "currency.h"
+#include "file.h"
 
 namespace Ui {
 class AddDialog;

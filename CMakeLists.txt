@@ -27,6 +27,8 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         adddialog.h adddialog.cpp adddialog.ui
         currency.h currency.cpp
         removedialog.h removedialog.cpp removedialog.ui
+        file.h file.cpp
+
     )
 # Define target properties for Android with Qt 6 as:
 #    set_property(TARGET savingOrganizer APPEND PROPERTY QT_ANDROID_PACKAGE_SOURCE_DIR

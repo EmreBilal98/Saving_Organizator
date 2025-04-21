@@ -187,6 +187,10 @@ void MainWindow::on_actionAdd_Saving_triggered()
 
     qInfo()<<db.setValue(m_username,m_password,dlg->getCurrency(),dlg->getAmount(),ADD);
 
+    File file("erqut");
+    file.addLineToFile(Currency::currencyToString(static_cast<CurrencyType>(dlg->getCurrency())),dlg->getAmount(),"fddbhdjkfbsdjfld",db.getValue(m_username,dlg->getCurrency(),"SavingAmount").toDouble(),ADD);
+
+
     setModel();
 
 }
@@ -204,6 +208,9 @@ void MainWindow::on_actionRemove_Saving_triggered()
     if(result==RemoveDialog::Accepted){
 
         db.setValue(m_username,m_password,static_cast<int>(Currency::stringToCurrency(dlg->getPrice().first)),dlg->getPrice().second,SUB);
+
+        File file("erqut");
+        file.addLineToFile(dlg->getPrice().first,dlg->getPrice().second,"fddbhdjkfbsdjfld",db.getValue(m_username,static_cast<int>(Currency::stringToCurrency(dlg->getPrice().first)),"SavingAmount").toDouble(),SUB);
         setModel();
     }
 

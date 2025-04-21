@@ -54,6 +54,8 @@ void AddDialog::save()
 {
     currency=ui->comboBox->currentIndex();
     amount=ui->doubleSpinBox->value();
+    // File file("erqut");
+    // file.addLineToFile(ui->comboBox->currentText(),amount,"fddbhdjkfbsdjfld");
 
 }
 
