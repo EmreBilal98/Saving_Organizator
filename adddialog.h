@@ -3,6 +3,7 @@
 
 #include <QDialog>
 #include  <QStringList>
+#include <QAbstractItemView>
 #include  "currency.h"
 
 namespace Ui {

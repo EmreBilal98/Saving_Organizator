@@ -7,8 +7,12 @@ RemoveDialog::RemoveDialog(QWidget *parent)
 {
     ui->setupUi(this);
     comment.clear();
-    price.first=="";
+    price.first="";
     price.second=0;
+
+    ui->comboBox->view()->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
+    ui->comboBox->view()->setMinimumHeight(100);
+    ui->comboBox->view()->setMaximumHeight(550);
 }
 
 RemoveDialog::~RemoveDialog()

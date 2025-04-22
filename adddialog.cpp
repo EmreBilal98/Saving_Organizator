@@ -46,6 +46,9 @@ void AddDialog::init()
     currency=0;
     amount=0;
     comment.clear();
+    ui->comboBox->view()->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
+    ui->comboBox->view()->setMinimumHeight(100);
+    ui->comboBox->view()->setMaximumHeight(550);
     for(int i=0;i<static_cast<int>(CurrencyType::COUNT)-1;i++){
         ui->comboBox->addItem(Currency::currencyToString(static_cast<CurrencyType>(i)));
     }

@@ -110,11 +110,11 @@ bool Database::searchValue(QString column, QString value)
 
 }
 
-bool Database::setValue(QString username, QString password,int currency, double value,bool transaction)
+bool Database::setValue(QString username, QString password,int currency, double value,bool transaction,double cost)
 {
     if(!db.isOpen()) openDB();
     QSqlQuery query;
-    QString cmd = "SELECT SavingAmount from `users` WHERE username=:username AND currencyType=:currency;";
+    QString cmd = "SELECT SavingAmount,cost from `users` WHERE username=:username AND currencyType=:currency;";
     query.prepare(cmd);
     query.bindValue(":username", username);
     query.bindValue(":currency", currency);
@@ -123,40 +123,51 @@ bool Database::setValue(QString username, QString password,int currency, double 
 
     if(ok)
     {
-        if(query.first()){
-
+        if(query.first()){//  eğerki bu curencyType da ve bu  usernamede bi kayıt varsa o satıra ekleyecek ve bu  if e girecek
+            qInfo()<<"gelmesi gereken";
             double amount=query.value(0).toDouble();
+            double totalCost=query.value(1).toDouble();
             qInfo()<<amount;
+            qInfo()<<totalCost;
             qInfo()<<value;
-            if(transaction)
+            if(transaction){
             amount+=value;
-            else
+            totalCost+=cost;
+            }
+            else{
+            totalCost=totalCost-(value*(totalCost/amount));
             amount-=value;
+            }
             qInfo()<<amount;
-            QString cmd = "UPDATE `users` SET SavingAmount=:SavingAmount WHERE username=:username AND currencyType=:currency;";
+            qInfo()<<totalCost;
+            QString cmd = "UPDATE `users` SET SavingAmount=:SavingAmount,cost=:cost WHERE username=:username AND currencyType=:currency;";
             query.prepare(cmd);
             query.bindValue(":username", username);
             query.bindValue(":currency", currency);
             query.bindValue(":SavingAmount", QString::number(amount));
+            query.bindValue(":cost", QString::number(totalCost));
 
             bool ok = query.exec();
 
             if(ok){
+                qInfo()<<"queery true";
                 return true;
             }
             else{
+                qInfo()<<"queery false";
                 qInfo()<<query.lastError().text();
             }
 
         }
-        else{
-            QString cmd = "INSERT INTO `users` (`username`,`password`,`currencyType`,`SavingAmount`)VALUES(:username,:password,:currencyType,:SavingAmount);";
+        else{//  eğerki bu curencyType da ve bu  usernamede bi kayıt yoksa databaseye yeni bir satır ekleyecek ve bu  else  e girecek
+            QString cmd = "INSERT INTO `users` (`username`,`password`,`currencyType`,`SavingAmount`,`cost`)VALUES(:username,:password,:currencyType,:SavingAmount,:cost);";
             query.prepare(cmd);
             query.bindValue(":username", username);
             query.bindValue(":password", password);
             query.bindValue(":currencyType", currency);
             query.bindValue(":SavingAmount", value);
-
+            query.bindValue(":cost", QString::number(cost));
+            qInfo()<<"gelmesi gerekmeyen";
             bool ok = query.exec();
 
             if(ok){

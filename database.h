@@ -23,7 +23,7 @@ public:
 public slots:
     bool createUser(QString username,QString password,int &errorCode);
     bool searchValue(QString column,QString value);
-    bool setValue(QString username,QString password,int currency,double value,bool transaction);
+    bool setValue(QString username,QString password,int currency,double value,bool transaction,double cost=0);
     QString getValue(QString username,int currency,QString column);
     QList<int> getCurrencies(QString username);
 

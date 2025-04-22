@@ -188,9 +188,11 @@ void MainWindow::on_actionAdd_Saving_triggered()
 
     qInfo()<<dlg->getAmount();
     qInfo()<<dlg->getCurrency();
-
-
-    qInfo()<<db.setValue(m_username,m_password,dlg->getCurrency(),dlg->getAmount(),ADD);
+    QStringList getCurValue;
+    getCurValue.append(Currency::currencyToString(static_cast<CurrencyType>(dlg->getCurrency())));
+    double cost=(1/currencyCheck("TRY",getCurValue).value(getCurValue.first()))*dlg->getAmount();
+    qInfo()<<"costt:"<<cost;
+    qInfo()<<db.setValue(m_username,m_password,dlg->getCurrency(),dlg->getAmount(),ADD,cost);
 
     file->addLineToFile(Currency::currencyToString(static_cast<CurrencyType>(dlg->getCurrency())),dlg->getAmount(),dlg->getComment(),db.getValue(m_username,dlg->getCurrency(),"SavingAmount").toDouble(),ADD);
 
