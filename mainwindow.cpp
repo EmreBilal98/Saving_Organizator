@@ -59,11 +59,13 @@ void MainWindow::init()
     ui->buttonBox->addButton(btn_login,QDialogButtonBox::ButtonRole::ActionRole);
     ui->buttonBox->addButton(btn_signUp,QDialogButtonBox::ButtonRole::ActionRole);
 
-    model.setColumnCount(3);
+    model.setColumnCount(5);
 
     model.setHeaderData(0, Qt::Horizontal, "currency");
     model.setHeaderData(1, Qt::Horizontal, "amount");
-    model.setHeaderData(2, Qt::Horizontal, "TL base");
+    model.setHeaderData(2, Qt::Horizontal, "TL equivalent");
+    model.setHeaderData(3, Qt::Horizontal, "TL cost");
+    model.setHeaderData(4, Qt::Horizontal, "TL profit");
 
     ui->tableView->setModel(&model);
 
@@ -97,18 +99,28 @@ void MainWindow::setModel()
     prices=currencyCheck("TRY",Currency::currencyToStringList(db.getCurrencies(m_username)));
     qInfo()<<prices;
     foreach(QString key,prices.keys()){
-        for(int column = 0; column < 3; ++column) {
+        for(int column = 0; column < 5; ++column) {
             QStandardItem *item = new QStandardItem();
-            if(!column){
+            if(column==0){
                 item->setText(QString("%0").arg(key));
                 qInfo()<<key<<":"<<prices.value(key);
             }
             else if(column==1)
                 item->setText(QString("%0").arg(db.getValue(m_username,static_cast<int>(Currency::stringToCurrency(key)),"SavingAmount")));
-            else{
+            else if(column==2){
                 double TLBaseCurrency=1/prices.value(key);
                 qInfo()<<key<<":"<<TLBaseCurrency<<" Carpan::"<<(db.getValue(m_username,static_cast<int>(Currency::stringToCurrency(key)),"SavingAmount").toDouble());
                 double val=(db.getValue(m_username,static_cast<int>(Currency::stringToCurrency(key)),"SavingAmount").toDouble())*TLBaseCurrency;
+                item->setText(QString("%0").arg(val));
+            }
+            else if(column==3){
+                double  val=db.getValue(m_username,static_cast<int>(Currency::stringToCurrency(key)),"cost").toDouble();
+                qInfo()<<"cost:"<<val;
+                item->setText(QString("%0").arg(val));
+            }
+            else if(column==4){
+                double val=model.item(row,2)->text().toDouble()-model.item(row,3)->text().toDouble();
+                qInfo()<<"cost:"<<val;
                 item->setText(QString("%0").arg(val));
             }
             model.setItem(row,column,item);
