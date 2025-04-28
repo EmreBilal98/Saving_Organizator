@@ -17,6 +17,8 @@
 #include "file.h"
 #include "addgolddialog.h"
 #include "addexchangedialog.h"
+#include "removegolddialog.h"
+#include "removeexchangedialog.h"
 
 enum StackedWidgetIdex{
     LOGIN,USER,ACTIVITIES,SIGNUP
@@ -58,6 +60,10 @@ private slots:
     void on_actionAdd_Gold_triggered();
 
     void on_actionadd_Exchange_triggered();
+
+    void on_actionRemove_Gold_triggered();
+
+    void on_actionRemove_exchange_triggered();
 
 private:
     Ui::MainWindow *ui;

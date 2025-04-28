@@ -159,7 +159,7 @@ void MainWindow::setModel2()
 {
     QStringList exchanges,XAUs;
     exchanges=db.getList(m_username,3,"StockName");
-    XAUs=db.getList(m_username,3,"currencyType");
+    XAUs=db.getList(m_username,2,"currencyType");
     qInfo()<<"exchange:"<<exchanges;
     qInfo()<<"XAUs:"<<XAUs;
     int row=0;
@@ -340,7 +340,6 @@ void MainWindow::on_actionAdd_Saving_triggered()
     QStringList getCurValue;
     getCurValue.append(Currency::currencyToString(static_cast<CurrencyType>(dlg->getCurrency())));
     double cost=(1/currencyCheck("TRY",getCurValue).value(getCurValue.first()))*dlg->getAmount();
-    qInfo()<<"costt:"<<cost;
     qInfo()<<db.setValue(m_username,m_password,dlg->getCurrency(),dlg->getAmount(),ADD,cost);
 
     file->addLineToFile(Currency::currencyToString(static_cast<CurrencyType>(dlg->getCurrency())),dlg->getAmount(),dlg->getComment(),db.getValue(m_username,dlg->getCurrency(),1,"SavingAmount").toDouble(),ADD);
@@ -441,5 +440,39 @@ void MainWindow::on_actionadd_Exchange_triggered()
     db.setValue(m_username,m_password,0,dlg->getAmount(),ADD,dlg->getAmount()*stockExchanges.value(dlg->getStock()),3,dlg->getStock());
     setModel2();
 
+}
+
+
+void MainWindow::on_actionRemove_Gold_triggered()
+{
+    RemoveGoldDialog *dlg=new RemoveGoldDialog(this);
+    dlg->setTotalAmount(db.getValue(m_username,0,2,"SavingAmount").toDouble());
+    int  result=dlg->exec();
+
+    if(result==RemoveDialog::Accepted){
+
+        db.setValue(m_username,m_password,0,dlg->getRemovedAmount(),SUB,0,2);
+
+        //file->addLineToFile(dlg->getPrice().first,dlg->getPrice().second,dlg->getComment(),db.getValue(m_username,static_cast<int>(Currency::stringToCurrency(dlg->getPrice().first)),1,"SavingAmount").toDouble(),SUB);
+        setModel2();
+    }
+
+}
+
+
+void MainWindow::on_actionRemove_exchange_triggered()
+{
+    RemoveExchangeDialog *dlg=new RemoveExchangeDialog(this);
+    dlg->setUsername(m_username);
+    int  result=dlg->exec();
+
+
+    if(result==RemoveDialog::Accepted){
+
+        db.setValue(m_username,m_password,0,dlg->getStockandpice().second,SUB,0,3,dlg->getStockandpice().first);
+
+        //file->addLineToFile(dlg->getPrice().first,dlg->getPrice().second,dlg->getComment(),db.getValue(m_username,static_cast<int>(Currency::stringToCurrency(dlg->getPrice().first)),1,"SavingAmount").toDouble(),SUB);
+        setModel2();
+    }
 }
 

@@ -251,7 +251,9 @@
     <addaction name="actionAdd_Saving"/>
     <addaction name="actionRemove_Saving"/>
     <addaction name="actionAdd_Gold"/>
+    <addaction name="actionRemove_Gold"/>
     <addaction name="actionadd_Exchange"/>
+    <addaction name="actionRemove_exchange"/>
    </widget>
    <widget class="QMenu" name="menuAccount">
     <property name="title">
@@ -277,8 +279,12 @@
    </attribute>
    <addaction name="actionAdd_Saving"/>
    <addaction name="actionRemove_Saving"/>
+   <addaction name="separator"/>
    <addaction name="actionAdd_Gold"/>
+   <addaction name="actionRemove_Gold"/>
+   <addaction name="separator"/>
    <addaction name="actionadd_Exchange"/>
+   <addaction name="actionRemove_exchange"/>
    <addaction name="separator"/>
    <addaction name="actionMain_Page"/>
    <addaction name="actionAccount_Activities"/>
@@ -356,6 +362,28 @@
    </property>
    <property name="text">
     <string>add Exchange</string>
+   </property>
+   <property name="menuRole">
+    <enum>QAction::MenuRole::NoRole</enum>
+   </property>
+  </action>
+  <action name="actionRemove_Gold">
+   <property name="icon">
+    <iconset theme="QIcon::ThemeIcon::SystemReboot"/>
+   </property>
+   <property name="text">
+    <string>Remove Gold</string>
+   </property>
+   <property name="menuRole">
+    <enum>QAction::MenuRole::NoRole</enum>
+   </property>
+  </action>
+  <action name="actionRemove_exchange">
+   <property name="icon">
+    <iconset theme="QIcon::ThemeIcon::DocumentSend"/>
+   </property>
+   <property name="text">
+    <string>Remove exchange</string>
    </property>
    <property name="menuRole">
     <enum>QAction::MenuRole::NoRole</enum>

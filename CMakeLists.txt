@@ -30,6 +30,8 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         file.h file.cpp
         addgolddialog.h addgolddialog.cpp addgolddialog.ui
         addexchangedialog.h addexchangedialog.cpp addexchangedialog.ui
+        removegolddialog.h removegolddialog.cpp removegolddialog.ui
+        removeexchangedialog.h removeexchangedialog.cpp removeexchangedialog.ui
 
     )
 # Define target properties for Android with Qt 6 as:

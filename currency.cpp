@@ -64,8 +64,6 @@ void Currency::XAUReply(QNetworkReply *reply)
     // Sayfa içeriğini al
     QString pageContent = reply->readAll();
 
-    qDebug() << "Page content: " << pageContent;
-
     QRegularExpression reSatis("<li class=\"midrow satis\"[^>]*>([0-9.]+)</li>");
     QRegularExpression reAlis("<li class=\"midrow alis\"[^>]*>([0-9.]+)</li>");
     QRegularExpressionMatch matchSatis = reSatis.match(pageContent);
