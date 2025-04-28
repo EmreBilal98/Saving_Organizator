@@ -4,6 +4,8 @@ Currency::Currency(QObject *parent)
     : QObject{parent}
 {
     connect(&manager, &QNetworkAccessManager::finished, this, &Currency::currenyReply);
+    connect(&managerGold, &QNetworkAccessManager::finished, this, &Currency::XAUReply);
+    connect(&managerExchange, &QNetworkAccessManager::finished, this, &Currency::ExchangeReply);
 }
 
 void Currency::currencyRequest(const QString &base)
@@ -50,6 +52,75 @@ void Currency::currenyReply(QNetworkReply *reply)
         qWarning() << "Hata:" << reply->errorString();
     }
     reply->deleteLater();
+}
+
+void Currency::XAUReply(QNetworkReply *reply)
+{
+    if (reply->error() != QNetworkReply::NoError) {
+        qDebug() << "Error: " << reply->errorString();
+        return;
+    }
+
+    // Sayfa içeriğini al
+    QString pageContent = reply->readAll();
+
+    qDebug() << "Page content: " << pageContent;
+
+    QRegularExpression reSatis("<li class=\"midrow satis\"[^>]*>([0-9.]+)</li>");
+    QRegularExpression reAlis("<li class=\"midrow alis\"[^>]*>([0-9.]+)</li>");
+    QRegularExpressionMatch matchSatis = reSatis.match(pageContent);
+    QRegularExpressionMatch matchAlis = reAlis.match(pageContent);
+
+    if (matchSatis.hasMatch()) {
+        QString satisFiyati = matchSatis.captured(1);
+        qDebug() << "Gram Altın Satış Fiyatı:" << satisFiyati;
+        emit getSellXAUPrice(satisFiyati.toDouble());
+    } else {
+        qDebug() << "Fiyat bulunamadı.";
+    }
+
+    if (matchAlis.hasMatch()) {
+        QString alisFiyati = matchAlis.captured(1);
+        qDebug() << "Gram Altın Satış Fiyatı:" << alisFiyati;
+        emit getBuyXAUPrice(alisFiyati.toDouble());
+    } else {
+        qDebug() << "Fiyat bulunamadı.";
+    }
+}
+
+void Currency::ExchangeReply(QNetworkReply *reply)
+{
+    if (reply->error() != QNetworkReply::NoError) {
+        qDebug() << "Error: " << reply->errorString();
+        return;
+    }
+
+    // Sayfa içeriğini al
+    QString pageContent = reply->readAll();
+    QMap <QString,double> exchanges;
+    QRegularExpression re("<ul[^>]*class=\"live-stock-item[^>]*data-symbol=\"([^\"]+)\"");
+    QRegularExpressionMatchIterator i = re.globalMatch(pageContent);
+
+    while (i.hasNext()) {
+        QRegularExpressionMatch match = i.next();
+        QString symbol = match.captured(1);
+        //qDebug() << "Sembol:" << symbol;
+
+        // 2. Her symbol için son fiyatı al
+        QRegularExpression priceRe("<li[^>]*id=\"h_td_fiyat_id_" + symbol + "\"[^>]*>([^<]+)</li>");
+        QRegularExpressionMatch priceMatch = priceRe.match(pageContent);
+
+        if (priceMatch.hasMatch()) {
+            QString fiyat = priceMatch.captured(1).trimmed();
+            //qDebug() << symbol << ":" << fiyat;
+            exchanges.insert(symbol,fiyat.replace(",",".").toDouble());
+        } else {
+            qDebug() << symbol << ": fiyat bulunamadı";
+        }
+
+    }
+    //qInfo()<<"getstockks:"<<exchanges;
+    emit getStocks(exchanges);
 }
 
 QString Currency::currencyToString(CurrencyType currency) {
@@ -134,6 +205,47 @@ QStringList Currency::currencyToStringList(QList<int> currencies) {
         result.append(currencyToString(currency));
     }
     return result;
+}
+
+QString Currency::XAUToString(XAUtype XAU)
+{
+    switch (XAU) {
+    case XAUtype::GrXAU: return "GrXAU";
+    default: return "UNKNOWN";
+    }
+}
+
+XAUtype Currency::stringToXAU(const QString &XAUStr)
+{
+    static const QMap<QString, XAUtype> XAUMap = {
+        {"GrXAU", XAUtype::GrXAU}
+    };
+
+    return XAUMap.value(XAUStr.toUpper(), XAUtype::UNKNOWN);
+}
+
+QStringList Currency::XAUToStringList(QList<int> XAUs)
+{
+    QStringList result;
+    for (int XAUInt : XAUs) {
+        XAUtype xau = static_cast<XAUtype>(XAUInt);
+        result.append(XAUToString(xau));
+    }
+    return result;
+}
+
+void Currency::getXAUData()
+{
+    QUrl url("https://altin.in/fiyat/gram-altin");
+    QNetworkRequest request(url);
+    managerGold.get(request);
+}
+
+void Currency::getExchangesData()
+{
+    QUrl url("https://bigpara.hurriyet.com.tr/borsa/canli-borsa/");
+    QNetworkRequest request(url);
+    managerExchange.get(request);
 }
 
 

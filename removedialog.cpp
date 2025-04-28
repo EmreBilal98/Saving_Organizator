@@ -50,7 +50,7 @@ void RemoveDialog::save()
 
 void RemoveDialog::on_comboBox_currentTextChanged(const QString &arg1)
 {
-    ui->doubleSpinBox->setMaximum(db.getValue(m_username,static_cast<int>(Currency::stringToCurrency(arg1)),"SavingAmount").toDouble());
+    ui->doubleSpinBox->setMaximum(db.getValue(m_username,static_cast<int>(Currency::stringToCurrency(arg1)),1,"SavingAmount").toDouble());
 }
 
 

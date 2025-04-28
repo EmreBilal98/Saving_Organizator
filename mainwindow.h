@@ -15,7 +15,8 @@
 #include "currency.h"
 #include "removedialog.h"
 #include "file.h"
-
+#include "addgolddialog.h"
+#include "addexchangedialog.h"
 
 enum StackedWidgetIdex{
     LOGIN,USER,ACTIVITIES,SIGNUP
@@ -54,19 +55,29 @@ private slots:
 
     void on_actionMain_Page_triggered();
 
+    void on_actionAdd_Gold_triggered();
+
+    void on_actionadd_Exchange_triggered();
+
 private:
     Ui::MainWindow *ui;
     Database db;
     QMap<QString,double> prices;
-    QStandardItemModel model;
+    QStandardItemModel model,modelXAU,modelExchange;
     QStringList activities;
     QString m_username,m_password;
+    double XAUprice;
+    QMap <QString,double>  stockExchanges;
     File *file;
 
     void init();
     void errorExceptions(int &error);
     void setModel();
+    void setModel2();
     QMap<QString,double> currencyCheck(const QString &base, const QStringList &target);
+    double XAUBuyCheck();
+    double XAUSellCheck();
+    QMap <QString,double> stockExchangeCheck();
     void enableActions(StackedWidgetIdex widgetIndex);
 
 };

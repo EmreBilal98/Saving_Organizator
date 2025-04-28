@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>544</width>
-    <height>338</height>
+    <height>449</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -20,7 +20,7 @@
       <item>
        <widget class="QStackedWidget" name="stackedWidget">
         <property name="currentIndex">
-         <number>2</number>
+         <number>1</number>
         </property>
         <widget class="QWidget" name="page">
          <layout class="QVBoxLayout" name="verticalLayout_2">
@@ -80,30 +80,57 @@
          </layout>
         </widget>
         <widget class="QWidget" name="page_2">
-         <layout class="QVBoxLayout" name="verticalLayout_4">
-          <item>
-           <widget class="QLabel" name="label_6">
-            <property name="text">
-             <string>Savings:</string>
+         <layout class="QGridLayout" name="gridLayout_4">
+          <item row="0" column="0">
+           <widget class="QTabWidget" name="tabWidget">
+            <property name="currentIndex">
+             <number>1</number>
             </property>
+            <widget class="QWidget" name="tab_cur">
+             <attribute name="title">
+              <string>Currencies</string>
+             </attribute>
+             <layout class="QGridLayout" name="gridLayout_5">
+              <item row="0" column="0">
+               <widget class="QTableView" name="tableView"/>
+              </item>
+             </layout>
+            </widget>
+            <widget class="QWidget" name="tab_xau">
+             <attribute name="title">
+              <string>XAU</string>
+             </attribute>
+             <layout class="QVBoxLayout" name="verticalLayout_5">
+              <item>
+               <widget class="QTableView" name="tableView_xau"/>
+              </item>
+             </layout>
+            </widget>
+            <widget class="QWidget" name="tab_exchange">
+             <attribute name="title">
+              <string>ExChange</string>
+             </attribute>
+             <layout class="QVBoxLayout" name="verticalLayout_4">
+              <item>
+               <widget class="QTableView" name="tableView_exchange"/>
+              </item>
+             </layout>
+            </widget>
            </widget>
-          </item>
-          <item>
-           <widget class="QTableView" name="tableView"/>
           </item>
          </layout>
         </widget>
         <widget class="QWidget" name="page_4">
          <layout class="QGridLayout" name="gridLayout_3">
+          <item row="1" column="0">
+           <widget class="QTextEdit" name="textEdit"/>
+          </item>
           <item row="0" column="0">
            <widget class="QLabel" name="label_7">
             <property name="text">
              <string>account activities:</string>
             </property>
            </widget>
-          </item>
-          <item row="1" column="0">
-           <widget class="QTextEdit" name="textEdit"/>
           </item>
          </layout>
         </widget>
@@ -223,6 +250,8 @@
     </property>
     <addaction name="actionAdd_Saving"/>
     <addaction name="actionRemove_Saving"/>
+    <addaction name="actionAdd_Gold"/>
+    <addaction name="actionadd_Exchange"/>
    </widget>
    <widget class="QMenu" name="menuAccount">
     <property name="title">
@@ -248,6 +277,8 @@
    </attribute>
    <addaction name="actionAdd_Saving"/>
    <addaction name="actionRemove_Saving"/>
+   <addaction name="actionAdd_Gold"/>
+   <addaction name="actionadd_Exchange"/>
    <addaction name="separator"/>
    <addaction name="actionMain_Page"/>
    <addaction name="actionAccount_Activities"/>
@@ -303,6 +334,28 @@
    </property>
    <property name="text">
     <string>Main Page</string>
+   </property>
+   <property name="menuRole">
+    <enum>QAction::MenuRole::NoRole</enum>
+   </property>
+  </action>
+  <action name="actionAdd_Gold">
+   <property name="icon">
+    <iconset theme="security-low"/>
+   </property>
+   <property name="text">
+    <string>Add Gold</string>
+   </property>
+   <property name="menuRole">
+    <enum>QAction::MenuRole::NoRole</enum>
+   </property>
+  </action>
+  <action name="actionadd_Exchange">
+   <property name="icon">
+    <iconset theme="x-office-presentation"/>
+   </property>
+   <property name="text">
+    <string>add Exchange</string>
    </property>
    <property name="menuRole">
     <enum>QAction::MenuRole::NoRole</enum>

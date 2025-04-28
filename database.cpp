@@ -110,14 +110,16 @@ bool Database::searchValue(QString column, QString value)
 
 }
 
-bool Database::setValue(QString username, QString password,int currency, double value,bool transaction,double cost)
+bool Database::setValue(QString username, QString password,int currency, double value,bool transaction,double cost,int savingType,QString StockName)
 {
     if(!db.isOpen()) openDB();
     QSqlQuery query;
-    QString cmd = "SELECT SavingAmount,cost from `users` WHERE username=:username AND currencyType=:currency;";
+    QString cmd = "SELECT SavingAmount,cost from `users` WHERE username=:username AND currencyType=:currency AND SavingType=:SavingType;";
     query.prepare(cmd);
     query.bindValue(":username", username);
     query.bindValue(":currency", currency);
+    query.bindValue(":SavingType", QString::number(savingType));
+
 
     bool ok = query.exec();
 
@@ -140,41 +142,89 @@ bool Database::setValue(QString username, QString password,int currency, double 
             }
             qInfo()<<amount;
             qInfo()<<totalCost;
-            QString cmd = "UPDATE `users` SET SavingAmount=:SavingAmount,cost=:cost WHERE username=:username AND currencyType=:currency;";
-            query.prepare(cmd);
-            query.bindValue(":username", username);
-            query.bindValue(":currency", currency);
-            query.bindValue(":SavingAmount", QString::number(amount));
-            query.bindValue(":cost", QString::number(totalCost));
+            if(savingType!=3)
+            {
+                QString cmd = "UPDATE `users` SET SavingAmount=:SavingAmount,cost=:cost WHERE username=:username AND currencyType=:currency AND SavingType=:SavingType;";
+                query.prepare(cmd);
+                query.bindValue(":username", username);
+                query.bindValue(":currency", currency);
+                query.bindValue(":SavingAmount", QString::number(amount));
+                query.bindValue(":cost", QString::number(totalCost));
+                query.bindValue(":SavingType", QString::number(savingType));
 
-            bool ok = query.exec();
+                bool ok = query.exec();
 
-            if(ok){
-                qInfo()<<"queery true";
-                return true;
+                if(ok){
+                    qInfo()<<"queery true";
+                    return true;
+                }
+                else{
+                    qInfo()<<"queery false";
+                    qInfo()<<query.lastError().text();
+                }
             }
             else{
-                qInfo()<<"queery false";
-                qInfo()<<query.lastError().text();
+                QString cmd = "UPDATE `users` SET SavingAmount=:SavingAmount,cost=:cost,StockName=:StockName WHERE username=:username AND currencyType=:currency AND SavingType=:SavingType;";
+                query.prepare(cmd);
+                query.bindValue(":username", username);
+                query.bindValue(":currency", currency);
+                query.bindValue(":SavingAmount", QString::number(amount));
+                query.bindValue(":cost", QString::number(totalCost));
+                query.bindValue(":SavingType", QString::number(savingType));
+                query.bindValue(":StockName", StockName);
+
+                bool ok = query.exec();
+
+                if(ok){
+                    qInfo()<<"queery true";
+                    return true;
+                }
+                else{
+                    qInfo()<<"queery false";
+                    qInfo()<<query.lastError().text();
+                }
             }
 
         }
         else{//  eğerki bu curencyType da ve bu  usernamede bi kayıt yoksa databaseye yeni bir satır ekleyecek ve bu  else  e girecek
-            QString cmd = "INSERT INTO `users` (`username`,`password`,`currencyType`,`SavingAmount`,`cost`)VALUES(:username,:password,:currencyType,:SavingAmount,:cost);";
-            query.prepare(cmd);
-            query.bindValue(":username", username);
-            query.bindValue(":password", password);
-            query.bindValue(":currencyType", currency);
-            query.bindValue(":SavingAmount", value);
-            query.bindValue(":cost", QString::number(cost));
-            qInfo()<<"gelmesi gerekmeyen";
-            bool ok = query.exec();
+            if(savingType!=3){
+                QString cmd = "INSERT INTO `users` (`username`,`password`,`currencyType`,`SavingAmount`,`cost`,`SavingType`)VALUES(:username,:password,:currencyType,:SavingAmount,:cost,:SavingType);";
+                query.prepare(cmd);
+                query.bindValue(":username", username);
+                query.bindValue(":password", password);
+                query.bindValue(":currencyType", currency);
+                query.bindValue(":SavingAmount", value);
+                query.bindValue(":cost", QString::number(cost));
+                query.bindValue(":SavingType", QString::number(savingType));
+                qInfo()<<"gelmesi gerekmeyen";
+                bool ok = query.exec();
 
-            if(ok){
-                return true;
+                if(ok){
+                    return true;
+                }
+                else{
+                    qInfo()<<query.lastError().text();
+                }
             }
             else{
-                qInfo()<<query.lastError().text();
+                QString cmd = "INSERT INTO `users` (`username`,`password`,`currencyType`,`SavingAmount`,`cost`,`SavingType`,`StockName`)VALUES(:username,:password,:currencyType,:SavingAmount,:cost,:SavingType,:StockName);";
+                query.prepare(cmd);
+                query.bindValue(":username", username);
+                query.bindValue(":password", password);
+                query.bindValue(":currencyType", currency);
+                query.bindValue(":SavingAmount", value);
+                query.bindValue(":cost", QString::number(cost));
+                query.bindValue(":SavingType", QString::number(savingType));
+                query.bindValue(":StockName", StockName);
+                qInfo()<<"gelmesi gerekmeyen";
+                bool ok = query.exec();
+
+                if(ok){
+                    return true;
+                }
+                else{
+                    qInfo()<<query.lastError().text();
+                }
             }
         }
     }
@@ -186,14 +236,15 @@ bool Database::setValue(QString username, QString password,int currency, double 
     return false;
 }
 
-QString Database::getValue(QString username,int currency,QString column)
+QString Database::getValue(QString username,int currency,int savingType,QString column)
 {
     //if(!db.isOpen()) openDB();
-    QString cmd = QString("SELECT %0 FROM `users` WHERE  username=:username AND currencyType=:currency;").arg(column);
+    QString cmd = QString("SELECT %0 FROM `users` WHERE  username=:username AND currencyType=:currency AND SavingType=:SavingType;").arg(column);
     QSqlQuery query;
     query.prepare(cmd);
     query.bindValue(":username", username);
     query.bindValue(":currency", currency);
+    query.bindValue(":SavingType",savingType);
 
 
     bool ok = query.exec();
@@ -235,6 +286,59 @@ QList<int> Database::getCurrencies(QString username)
 
     return currencies;
 }
+
+QList<QString> Database::getList(QString username,int SavingType, QString column)
+{
+    if(!db.isOpen()) openDB();
+    QString cmd = QString("SELECT %0 FROM `users` WHERE  username=:username  AND SavingType=:SavingType;").arg(column);
+    QSqlQuery query;
+    QList<QString> list;
+    query.prepare(cmd);
+    query.bindValue(":username", username);
+    query.bindValue(":SavingType", SavingType);
+
+
+    bool ok = query.exec();
+
+    if(ok){
+        while(query.next()){
+            list<<query.value(0).toString();
+        }
+    }
+    else{
+        qInfo()<<query.lastError().text();
+    }
+
+    return list;
+}
+
+QString Database::getExchangeValue(QString username, QString StockName, int savingType, QString column)
+{
+    QString cmd = QString("SELECT %0 FROM `users` WHERE  username=:username AND StockName=:StockName AND SavingType=:SavingType;").arg(column);
+    QSqlQuery query;
+    query.prepare(cmd);
+    query.bindValue(":username", username);
+    query.bindValue(":StockName", StockName);
+    query.bindValue(":SavingType",savingType);
+
+
+    bool ok = query.exec();
+
+    if(ok){
+        if(query.next())
+            return query.value(0).toString();
+        else{
+            return QString();
+        }
+    }
+    else{
+        qInfo()<<query.lastError().text();
+    }
+
+    return QString();
+}
+
+
 
 
 
