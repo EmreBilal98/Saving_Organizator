@@ -120,6 +120,7 @@ void MainWindow::errorExceptions(int &error)
 void MainWindow::setModel()
 {
     int row=0;
+    QList<int> zeroAmountList;
     qInfo()<<db.getCurrencies(m_username);
     if(db.getCurrencies(m_username).isEmpty()) return;
     prices=currencyCheck("TRY",Currency::currencyToStringList(db.getCurrencies(m_username)));
@@ -131,27 +132,54 @@ void MainWindow::setModel()
                 item->setText(QString("%0").arg(key));
                 qInfo()<<key<<":"<<prices.value(key);
             }
-            else if(column==1)
-                item->setText(QString("%0").arg(db.getValue(m_username,static_cast<int>(Currency::stringToCurrency(key)),1,"SavingAmount")));
+            else if(column==1){
+                bool control;
+                double amount=db.getValue(m_username,static_cast<int>(Currency::stringToCurrency(key)),1,"SavingAmount").toDouble(&control);
+                if(control){
+                    if (amount > 0) {
+                        qInfo()<<"amount ssıfırdan bbuyuk";
+                        item->setText(QString::number(amount));
+                    } else {
+                        qInfo()<<"amount ssıfırdan bbuyuk değill";
+                        zeroAmountList.append(row);
+                        continue;
+
+                    }
+                }
+                else{
+                    zeroAmountList.append(row);
+                    continue;
+                }
+            }
             else if(column==2){
                 double TLBaseCurrency=1/prices.value(key);
                 qInfo()<<key<<":"<<TLBaseCurrency<<" Carpan::"<<(db.getValue(m_username,static_cast<int>(Currency::stringToCurrency(key)),1,"SavingAmount").toDouble());
                 double val=(db.getValue(m_username,static_cast<int>(Currency::stringToCurrency(key)),1,"SavingAmount").toDouble())*TLBaseCurrency;
-                item->setText(QString("%0").arg(val));
+                item->setText(QString::number(val, 'f', 3));
             }
             else if(column==3){
                 double  val=db.getValue(m_username,static_cast<int>(Currency::stringToCurrency(key)),1,"cost").toDouble();
                 qInfo()<<"cost:"<<val;
-                item->setText(QString("%0").arg(val));
+                item->setText(QString::number(val, 'f', 3));
             }
             else if(column==4){
                 double val=model.item(row,2)->text().toDouble()-model.item(row,3)->text().toDouble();
-                item->setText(QString("%0").arg(val));
+                item->setText(QString::number(val, 'f', 3));
             }
             model.setItem(row,column,item);
 
         }
         row++;
+    }
+
+    //sıfır miktarı kalann satırlar sil
+    foreach(int zrow,zeroAmountList){
+        if (zrow >= 0 && zrow< model.rowCount()) {
+            model.removeRow(zrow);
+        } else {
+            qWarning() << "Geçersiz satır numarası!";
+        }
+
     }
 }
 
@@ -219,12 +247,16 @@ QMap<QString,double> MainWindow::currencyCheck(const QString &base, const QStrin
 {
     Currency *api=new Currency(this);
     api->currencyRequest(base);
+    QMap<QString,double> val;
     QStringList srcCur;
     foreach (QString item, target) {
+        if(item=="TRY"){
+            val.insert("TRY",1);
+        }
         srcCur.append(base+item);
     }
-    qInfo()<<target;
-    QMap<QString,double> val;
+    qInfo()<<"target::"<<target;
+
     QEventLoop loop;
     connect(api,&Currency::getValue,api,[&target,&val,&loop](QMap<QString,double> currencies){
 
@@ -232,6 +264,7 @@ QMap<QString,double> MainWindow::currencyCheck(const QString &base, const QStrin
         if(currencies.contains(item))
         val.insert(item.remove("TRY"),currencies[item]);
         }
+
         loop.quit();
     });
 
@@ -335,11 +368,12 @@ void MainWindow::on_actionAdd_Saving_triggered()
     AddDialog *dlg=new AddDialog(this);
     dlg->exec();
 
-    qInfo()<<dlg->getAmount();
-    qInfo()<<dlg->getCurrency();
+    qInfo()<<"aamouunt:."<<dlg->getAmount();
+    qInfo()<<"currency:"<<dlg->getCurrency();
     QStringList getCurValue;
     getCurValue.append(Currency::currencyToString(static_cast<CurrencyType>(dlg->getCurrency())));
     double cost=(1/currencyCheck("TRY",getCurValue).value(getCurValue.first()))*dlg->getAmount();
+    qInfo()<<"cost:."<<cost;
     qInfo()<<db.setValue(m_username,m_password,dlg->getCurrency(),dlg->getAmount(),ADD,cost);
 
     file->addLineToFile(Currency::currencyToString(static_cast<CurrencyType>(dlg->getCurrency())),dlg->getAmount(),dlg->getComment(),db.getValue(m_username,dlg->getCurrency(),1,"SavingAmount").toDouble(),ADD);

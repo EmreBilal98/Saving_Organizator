@@ -124,7 +124,6 @@ void Currency::ExchangeReply(QNetworkReply *reply)
 QString Currency::currencyToString(CurrencyType currency) {
     switch (currency) {
     case CurrencyType::AUD: return "AUD";
-    case CurrencyType::BGN: return "BGN";
     case CurrencyType::BRL: return "BRL";
     case CurrencyType::CAD: return "CAD";
     case CurrencyType::CHF: return "CHF";
@@ -161,7 +160,6 @@ QString Currency::currencyToString(CurrencyType currency) {
 CurrencyType Currency::stringToCurrency(const QString &currencyStr) {
     static const QMap<QString, CurrencyType> currencyMap = {
         {"AUD", CurrencyType::AUD},
-        {"BGN", CurrencyType::BGN},
         {"BRL", CurrencyType::BRL},
         {"CAD", CurrencyType::CAD},
         {"CHF", CurrencyType::CHF},

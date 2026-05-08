@@ -7,32 +7,48 @@ Database::Database(QObject *parent)
 
 bool Database::openDB()
 {
-    qInfo() << "Opening Database";
-    db = QSqlDatabase::addDatabase("QMYSQL");
-    db.setHostName("localhost");
-    db.setDatabaseName("saving_organize");
-    db.setUserName("qt6ca"); //Change the username
-    db.setPassword("479-annem"); //Change the password
+    qInfo() << "Opening SQLite Database";
 
+    // Sürücüyü QSQLITE olarak değiştiriyoruz
+    db = QSqlDatabase::addDatabase("QSQLITE");
 
+    // Veritabanı adı artık bir dosya yoludur.
+    // Uygulamanın yanına "saving_organizer.db" adında bir dosya oluşturur.
+    db.setDatabaseName("saving_organizer.db");
 
-    bool ok =false;
-
-    if(!db.isOpen())
-       ok=db.open();
-    else
-        return true;
-
-    if(ok)
-    {
-        qInfo() << "Opened database connection!";
-        return true;
+    if(!db.open()) {
+        qInfo() << "Failed to open SQLite database!";
+        qInfo() << db.lastError().text();
+        return false;
     }
 
-    qInfo() << "Failed to open connection!";
-    qInfo() << db.lastError().text();
+    qInfo() << "Opened SQLite database connection!";
 
-    return false;
+    // SQLite'a geçtiğimiz için tabloların varlığını her açılışta kontrol etmek iyidir
+    return setupDatabase();
+}
+
+bool Database::setupDatabase()
+{
+    if(!db.isOpen()) return false;
+
+    QSqlQuery query;
+    QString createTable = "CREATE TABLE IF NOT EXISTS users ("
+                          "id INTEGER PRIMARY KEY AUTOINCREMENT,"
+                          "username TEXT NOT NULL,"
+                          "password TEXT NOT NULL,"
+                          "currencyType INTEGER,"
+                          "SavingAmount REAL,"
+                          "cost REAL,"
+                          "SavingType INTEGER,"
+                          "StockName TEXT"
+                          ");";
+
+    if(!query.exec(createTable)) {
+        qCritical() << "Tablo oluşturulamadı veya kontrol edilemedi:" << query.lastError().text();
+        return false;
+    }
+    return true;
 }
 
 bool Database::createUser(QString username, QString password,int &errorCode)

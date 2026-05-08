@@ -11,7 +11,6 @@
 enum class CurrencyType {
     UNKNOWN=-1,
     AUD=0,
-    BGN,
     BRL,
     CAD,
     CHF,

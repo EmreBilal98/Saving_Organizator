@@ -21,6 +21,7 @@ public:
     bool openDB();
 
 public slots:
+    bool setupDatabase();
     bool createUser(QString username,QString password,int &errorCode);
     bool searchValue(QString column,QString value);
     bool setValue(QString username,QString password,int currency,double value,bool transaction,double cost=0,int savingType=1,QString StockName=nullptr);
