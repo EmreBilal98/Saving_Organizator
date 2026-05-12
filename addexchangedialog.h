@@ -24,6 +24,8 @@ public:
 
     QString getStock() const;
 
+    double getPrice() const;
+
 private slots:
     void on_buttonBox_accepted();
 
@@ -33,6 +35,7 @@ private:
     Ui::AddExchangeDialog *ui;
     QMap<QString,double> stocksAndprices;
     double amount;
+    double price;
     QString stock,comment;
 
     void init();

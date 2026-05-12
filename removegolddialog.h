@@ -23,6 +23,8 @@ public:
 
     QString getComment() const;
 
+    double getRemovedPrice() const;
+
 private slots:
     void on_horizontalSlider_valueChanged(int value);
 
@@ -34,6 +36,7 @@ private:
     Ui::RemoveGoldDialog *ui;
     double RemovedAmount,totalAmount;
     QString comment;
+    double RemovedPrice;
 
     void save();
 };

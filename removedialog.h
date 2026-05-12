@@ -26,6 +26,8 @@ public:
 
     QString getComment() const;
 
+    double getTotalPrice() const;
+
 private slots:
     void on_comboBox_currentTextChanged(const QString &arg1);
 
@@ -41,6 +43,7 @@ private:
     QString m_username;
     Database db;
     QPair<QString, double> price;
+    double totalPrice;
     QString comment;
 
     void save();

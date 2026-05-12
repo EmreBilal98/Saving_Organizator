@@ -126,7 +126,7 @@ bool Database::searchValue(QString column, QString value)
 
 }
 
-bool Database::setValue(QString username, QString password,int currency, double value,bool transaction,double cost,int savingType,QString StockName)
+bool Database::setValue(QString username, QString password,int currency, double value,bool transaction,double cost,int savingType,QString StockName,double subPrice)
 {
     if(!db.isOpen()) openDB();
 
@@ -164,7 +164,8 @@ bool Database::setValue(QString username, QString password,int currency, double 
             totalCost+=cost;
             }
             else{
-            totalCost=totalCost-(value*(totalCost/amount));
+            //totalCost=totalCost-(value*(totalCost/amount));
+            totalCost=totalCost-subPrice;
             amount-=value;
             }
             qInfo()<<amount;

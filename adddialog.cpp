@@ -41,6 +41,11 @@ int AddDialog::getCurrency() const
     return currency;
 }
 
+double AddDialog::getPrice() const
+{
+    return price;
+}
+
 void AddDialog::init()
 {
     currency=0;
@@ -49,13 +54,12 @@ void AddDialog::init()
     ui->comboBox->view()->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
     ui->comboBox->view()->setMinimumHeight(100);
     ui->comboBox->view()->setMaximumHeight(550);
+    ui->Price_spinbox->setEnabled(false);
+    connect(ui->chk_activate, &QCheckBox::toggled, ui->Price_spinbox, &QDoubleSpinBox::setEnabled);
     for(int i=0;i<static_cast<int>(CurrencyType::COUNT)-1;i++){
         ui->comboBox->addItem(Currency::currencyToString(static_cast<CurrencyType>(i)));
     }
-    // currencies<<"Dolar"<<"Euro";
-    // foreach (QString item, currencies) {
-    //     ui->comboBox->addItem(item);
-    // }
+
 }
 
 void AddDialog::save()
@@ -63,6 +67,7 @@ void AddDialog::save()
     currency=ui->comboBox->currentIndex();
     amount=ui->doubleSpinBox->value();
     comment=ui->cmntLine->text();
+    ui->chk_activate->isChecked()?price=ui->Price_spinbox->value():price=-1;
 
 }
 

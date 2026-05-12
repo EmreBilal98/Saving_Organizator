@@ -23,6 +23,8 @@ public:
 
     QString getComment() const;
 
+    double getRemovedPrice() const;
+
 private slots:
     void on_horizontalSlider_valueChanged(int value);
 
@@ -38,6 +40,7 @@ private:
     QString username;
     QPair<QString,int> stockandpice;
     QString comment;
+    double RemovedPrice;
 
     void init();
     void save();

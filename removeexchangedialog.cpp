@@ -25,6 +25,8 @@ void RemoveExchangeDialog::init()
     QStringList stocks=db.getList(username,3,"StockName");
     qInfo()<<stocks;
     ui->comboBox->addItems(db.getList(username,3,"StockName"));
+    ui->price_spinBox->setEnabled(false);
+    connect(ui->chk_activate, &QCheckBox::toggled, ui->price_spinBox, &QDoubleSpinBox::setEnabled);
 
 }
 
@@ -33,6 +35,7 @@ void RemoveExchangeDialog::save()
     stockandpice.first=ui->comboBox->currentText();
     stockandpice.second=ui->spinBox->value();
     comment=ui->cmntLine->text();
+    ui->chk_activate->isChecked()?RemovedPrice=ui->price_spinBox->value():RemovedPrice=-1;
 }
 
 void RemoveExchangeDialog::on_horizontalSlider_valueChanged(int value)
@@ -76,5 +79,10 @@ void RemoveExchangeDialog::on_buttonBox_accepted()
 void RemoveExchangeDialog::on_buttonBox_rejected()
 {
     reject();
+}
+
+double RemoveExchangeDialog::getRemovedPrice() const
+{
+    return RemovedPrice;
 }
 

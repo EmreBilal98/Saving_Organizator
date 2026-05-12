@@ -13,6 +13,9 @@ RemoveDialog::RemoveDialog(QWidget *parent)
     ui->comboBox->view()->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
     ui->comboBox->view()->setMinimumHeight(100);
     ui->comboBox->view()->setMaximumHeight(550);
+
+    ui->price_spinBox->setEnabled(false);
+    connect(ui->chk_activate, &QCheckBox::toggled, ui->price_spinBox, &QDoubleSpinBox::setEnabled);
 }
 
 RemoveDialog::~RemoveDialog()
@@ -46,6 +49,7 @@ void RemoveDialog::save()
     price.first=ui->comboBox->currentText();
     price.second=ui->doubleSpinBox->value();
     comment=ui->cmntLine->text();
+    ui->chk_activate->isChecked()?totalPrice=ui->price_spinBox->value():totalPrice=-1;
 }
 
 void RemoveDialog::on_comboBox_currentTextChanged(const QString &arg1)
@@ -79,6 +83,11 @@ void RemoveDialog::on_buttonBox_accepted()
 void RemoveDialog::on_buttonBox_rejected()
 {
     reject();
+}
+
+double RemoveDialog::getTotalPrice() const
+{
+    return totalPrice;
 }
 
 QString RemoveDialog::getComment() const

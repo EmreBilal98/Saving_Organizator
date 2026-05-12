@@ -7,6 +7,9 @@ RemoveGoldDialog::RemoveGoldDialog(QWidget *parent)
 {
     ui->setupUi(this);
     comment.clear();
+
+    ui->price_spinBox->setEnabled(false);
+    connect(ui->chk_activate, &QCheckBox::toggled, ui->price_spinBox, &QDoubleSpinBox::setEnabled);
 }
 
 RemoveGoldDialog::~RemoveGoldDialog()
@@ -42,7 +45,8 @@ void RemoveGoldDialog::on_horizontalSlider_valueChanged(int value)
 void RemoveGoldDialog::save()
 {
     comment=ui->lineEdit->text();
-    RemovedAmount=ui->doubleSpinBox->value();;
+    RemovedAmount=ui->doubleSpinBox->value();
+    ui->chk_activate->isChecked()?RemovedPrice=ui->price_spinBox->value():RemovedPrice=-1;
 }
 
 QString RemoveGoldDialog::getComment() const
@@ -61,5 +65,10 @@ void RemoveGoldDialog::on_buttonBox_accepted()
 void RemoveGoldDialog::on_buttonBox_rejected()
 {
     reject();
+}
+
+double RemoveGoldDialog::getRemovedPrice() const
+{
+    return RemovedPrice;
 }
 

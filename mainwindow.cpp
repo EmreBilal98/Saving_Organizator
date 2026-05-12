@@ -376,7 +376,8 @@ void MainWindow::on_actionAdd_Saving_triggered()
     qInfo()<<"currency:"<<dlg->getCurrency();
     QStringList getCurValue;
     getCurValue.append(Currency::currencyToString(static_cast<CurrencyType>(dlg->getCurrency())));
-    double cost=(1/currencyCheck("TRY",getCurValue).value(getCurValue.first()))*dlg->getAmount();
+    double cost=0;
+    (dlg->getPrice()==-1)?cost=(1/currencyCheck("TRY",getCurValue).value(getCurValue.first()))*dlg->getAmount():cost=dlg->getPrice();
     qInfo()<<"cost:."<<cost;
     qInfo()<<db.setValue(m_username,m_password,dlg->getCurrency(),dlg->getAmount(),ADD,cost);
 
@@ -399,7 +400,13 @@ void MainWindow::on_actionRemove_Saving_triggered()
 
     if(result==RemoveDialog::Accepted){
 
-        db.setValue(m_username,m_password,static_cast<int>(Currency::stringToCurrency(dlg->getPrice().first)),dlg->getPrice().second,SUB);
+        qInfo()<<"geetprice first:"<<dlg->getPrice().first<<"geetprice second:"<<dlg->getPrice().second;
+        double cost=0;
+        QStringList curlist;
+        curlist.append(dlg->getPrice().first);
+        (dlg->getTotalPrice()==-1)?cost=dlg->getPrice().second*(1/currencyCheck("TRY",curlist).value(dlg->getPrice().first)):cost=dlg->getTotalPrice();
+        db.setValue(m_username,m_password,static_cast<int>(Currency::stringToCurrency(dlg->getPrice().first)),
+                    dlg->getPrice().second,SUB,0,1,nullptr,cost);
 
         file->addLineToFile(dlg->getPrice().first,dlg->getPrice().second,dlg->getComment(),db.getValue(m_username,static_cast<int>(Currency::stringToCurrency(dlg->getPrice().first)),1,"SavingAmount").toDouble(),SUB);
         setModel();
@@ -407,6 +414,48 @@ void MainWindow::on_actionRemove_Saving_triggered()
 
 
 
+}
+
+void MainWindow::on_actionRemove_Gold_triggered()
+{
+    RemoveGoldDialog *dlg=new RemoveGoldDialog(this);
+    dlg->setTotalAmount(db.getValue(m_username,0,2,"SavingAmount").toDouble());
+    int  result=dlg->exec();
+
+    if(result==RemoveDialog::Accepted){
+
+        double cost=0;
+
+        (dlg->getRemovedPrice()==-1)?cost=dlg->getRemovedAmount()*XAUSellCheck():cost=dlg->getRemovedPrice();
+        db.setValue(m_username,m_password,0,dlg->getRemovedAmount(),SUB,0,2,nullptr,cost);
+
+        file->addLineToFile(QString("Gold"),dlg->getRemovedAmount(),
+                            dlg->getComment(),db.getValue(m_username,0,2,"SavingAmount").toDouble(),SUB);
+        setModel2();
+    }
+
+}
+
+
+void MainWindow::on_actionRemove_exchange_triggered()
+{
+    RemoveExchangeDialog *dlg=new RemoveExchangeDialog(this);
+    dlg->setUsername(m_username);
+    int  result=dlg->exec();
+
+
+    if(result==RemoveDialog::Accepted){
+
+        double cost=0;
+        //qInfo()<<"exxchaange and value \n\n\n\n"<<stockExchangeCheck();
+        (dlg->getRemovedPrice()==-1)?cost=dlg->getStockandpice().second*stockExchangeCheck().value(dlg->getStockandpice().first):cost=dlg->getRemovedPrice();
+
+        db.setValue(m_username,m_password,0,dlg->getStockandpice().second,SUB,0,3,dlg->getStockandpice().first,cost);
+
+        file->addLineToFile(dlg->getStockandpice().first,dlg->getStockandpice().second,
+                            dlg->getComment(),db.getStockValue(m_username,3,dlg->getStockandpice().first,"SavingAmount").toDouble(),SUB);
+        setModel2();
+    }
 }
 
 
@@ -463,7 +512,7 @@ void MainWindow::on_actionAdd_Gold_triggered()
     AddGoldDialog *dlg=new  AddGoldDialog(this);;
     dlg->exec();
     qInfo()<<dlg->getAmount();
-    db.setValue(m_username,m_password,0,dlg->getAmount(),ADD,dlg->getAmount()*XAUprice,2);
+    db.setValue(m_username,m_password,0,dlg->getAmount(),ADD,(dlg->getPrice()==-1)?dlg->getAmount()*XAUprice:dlg->getPrice(),2);
 
     file->addLineToFile(QString("Gold"),dlg->getAmount(),
                       dlg->getComment(),db.getValue(m_username,0,2,"SavingAmount").toDouble(),ADD);
@@ -478,7 +527,8 @@ void MainWindow::on_actionadd_Exchange_triggered()
     dlg->setStocksAndprices(stockExchanges);
 
     dlg->exec();
-    db.setValue(m_username,m_password,0,dlg->getAmount(),ADD,dlg->getAmount()*stockExchanges.value(dlg->getStock()),3,dlg->getStock());
+
+    db.setValue(m_username,m_password,0,dlg->getAmount(),ADD,(dlg->getPrice()==-1)?dlg->getAmount()*stockExchanges.value(dlg->getStock()):dlg->getPrice(),3,dlg->getStock());
     file->addLineToFile(dlg->getStock(),dlg->getAmount(),
                         dlg->getComment(),db.getStockValue(m_username,3,dlg->getStock(),"SavingAmount").toDouble(),ADD);
     setModel2();
@@ -486,38 +536,5 @@ void MainWindow::on_actionadd_Exchange_triggered()
 }
 
 
-void MainWindow::on_actionRemove_Gold_triggered()
-{
-    RemoveGoldDialog *dlg=new RemoveGoldDialog(this);
-    dlg->setTotalAmount(db.getValue(m_username,0,2,"SavingAmount").toDouble());
-    int  result=dlg->exec();
 
-    if(result==RemoveDialog::Accepted){
-
-        db.setValue(m_username,m_password,0,dlg->getRemovedAmount(),SUB,0,2);
-
-        file->addLineToFile(QString("Gold"),dlg->getRemovedAmount(),
-                            dlg->getComment(),db.getValue(m_username,0,2,"SavingAmount").toDouble(),SUB);
-        setModel2();
-    }
-
-}
-
-
-void MainWindow::on_actionRemove_exchange_triggered()
-{
-    RemoveExchangeDialog *dlg=new RemoveExchangeDialog(this);
-    dlg->setUsername(m_username);
-    int  result=dlg->exec();
-
-
-    if(result==RemoveDialog::Accepted){
-
-        db.setValue(m_username,m_password,0,dlg->getStockandpice().second,SUB,0,3,dlg->getStockandpice().first);
-
-        file->addLineToFile(dlg->getStockandpice().first,dlg->getStockandpice().second,
-                            dlg->getComment(),db.getStockValue(m_username,3,dlg->getStockandpice().first,"SavingAmount").toDouble(),SUB);
-        setModel2();
-    }
-}
 

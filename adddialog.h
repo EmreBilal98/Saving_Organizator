@@ -24,6 +24,8 @@ public:
 
     QString getComment() const;
 
+    double getPrice() const;
+
 private slots:
     void on_buttonBox_accepted();
 
@@ -33,6 +35,7 @@ private:
     Ui::AddDialog *ui;
     int currency;
     double amount;
+    double price;
     QString comment;
 
     void init();

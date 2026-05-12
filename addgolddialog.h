@@ -18,7 +18,12 @@ public:
     double getAmount() const;
 
     QString getComment() const;
+
+    double getPrice() const;
+
     void save();
+
+
 
 private slots:
     void on_buttonBox_accepted();
@@ -28,6 +33,7 @@ private slots:
 private:
     Ui::AddGoldDialog *ui;
     double amount;
+    double price;
     QString comment;
 };
 
