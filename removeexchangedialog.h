@@ -21,6 +21,8 @@ public:
 
     QPair<QString, int> getStockandpice() const;
 
+    QString getComment() const;
+
 private slots:
     void on_horizontalSlider_valueChanged(int value);
 
@@ -35,6 +37,7 @@ private:
     Database db;
     QString username;
     QPair<QString,int> stockandpice;
+    QString comment;
 
     void init();
     void save();

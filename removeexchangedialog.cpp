@@ -30,8 +30,9 @@ void RemoveExchangeDialog::init()
 
 void RemoveExchangeDialog::save()
 {
-    stockandpice.first=ui->comboBox->currentText();;
+    stockandpice.first=ui->comboBox->currentText();
     stockandpice.second=ui->spinBox->value();
+    comment=ui->cmntLine->text();
 }
 
 void RemoveExchangeDialog::on_horizontalSlider_valueChanged(int value)
@@ -57,6 +58,11 @@ void RemoveExchangeDialog::on_comboBox_currentTextChanged(const QString &arg1)
 QPair<QString, int> RemoveExchangeDialog::getStockandpice() const
 {
     return stockandpice;
+}
+
+QString RemoveExchangeDialog::getComment() const
+{
+    return comment;
 }
 
 

@@ -330,7 +330,9 @@ void MainWindow::enableActions(StackedWidgetIdex widgetIndex)
         ui->actionRemove_Saving->setEnabled(true);
         ui->actionLog_Out->setEnabled(true);
         ui->actionAdd_Gold->setEnabled(true);
+        ui->actionRemove_Gold->setEnabled(true);
         ui->actionadd_Exchange->setEnabled(true);
+        ui->actionRemove_exchange->setEnabled(true);
         return;
     }
     ui->actionAccount_Activities->setEnabled(false);
@@ -339,7 +341,9 @@ void MainWindow::enableActions(StackedWidgetIdex widgetIndex)
     ui->actionRemove_Saving->setEnabled(false);
     ui->actionLog_Out->setEnabled(false);
     ui->actionAdd_Gold->setEnabled(false);
+    ui->actionRemove_Gold->setEnabled(false);
     ui->actionadd_Exchange->setEnabled(false);
+    ui->actionRemove_exchange->setEnabled(false);
 }
 
 void MainWindow::on_btnSignUp_clicked()
@@ -460,6 +464,9 @@ void MainWindow::on_actionAdd_Gold_triggered()
     dlg->exec();
     qInfo()<<dlg->getAmount();
     db.setValue(m_username,m_password,0,dlg->getAmount(),ADD,dlg->getAmount()*XAUprice,2);
+
+    file->addLineToFile(QString("Gold"),dlg->getAmount(),
+                      dlg->getComment(),db.getValue(m_username,0,2,"SavingAmount").toDouble(),ADD);
     setModel2();
 }
 
@@ -472,6 +479,8 @@ void MainWindow::on_actionadd_Exchange_triggered()
 
     dlg->exec();
     db.setValue(m_username,m_password,0,dlg->getAmount(),ADD,dlg->getAmount()*stockExchanges.value(dlg->getStock()),3,dlg->getStock());
+    file->addLineToFile(dlg->getStock(),dlg->getAmount(),
+                        dlg->getComment(),db.getStockValue(m_username,3,dlg->getStock(),"SavingAmount").toDouble(),ADD);
     setModel2();
 
 }
@@ -487,7 +496,8 @@ void MainWindow::on_actionRemove_Gold_triggered()
 
         db.setValue(m_username,m_password,0,dlg->getRemovedAmount(),SUB,0,2);
 
-        //file->addLineToFile(dlg->getPrice().first,dlg->getPrice().second,dlg->getComment(),db.getValue(m_username,static_cast<int>(Currency::stringToCurrency(dlg->getPrice().first)),1,"SavingAmount").toDouble(),SUB);
+        file->addLineToFile(QString("Gold"),dlg->getRemovedAmount(),
+                            dlg->getComment(),db.getValue(m_username,0,2,"SavingAmount").toDouble(),SUB);
         setModel2();
     }
 
@@ -505,7 +515,8 @@ void MainWindow::on_actionRemove_exchange_triggered()
 
         db.setValue(m_username,m_password,0,dlg->getStockandpice().second,SUB,0,3,dlg->getStockandpice().first);
 
-        //file->addLineToFile(dlg->getPrice().first,dlg->getPrice().second,dlg->getComment(),db.getValue(m_username,static_cast<int>(Currency::stringToCurrency(dlg->getPrice().first)),1,"SavingAmount").toDouble(),SUB);
+        file->addLineToFile(dlg->getStockandpice().first,dlg->getStockandpice().second,
+                            dlg->getComment(),db.getStockValue(m_username,3,dlg->getStockandpice().first,"SavingAmount").toDouble(),SUB);
         setModel2();
     }
 }

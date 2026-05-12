@@ -289,6 +289,33 @@ QString Database::getValue(QString username,int currency,int savingType,QString 
     return QString();
 }
 
+QString Database::getStockValue(QString username,int savingType,QString stockname,QString column)
+{
+    if(!db.isOpen()) openDB();
+    QString cmd = QString("SELECT %0 FROM `users` WHERE  username=:username AND SavingType=:SavingType AND StockName=:stockname;").arg(column);
+    QSqlQuery query;
+    query.prepare(cmd);
+    query.bindValue(":username", username);
+    query.bindValue(":SavingType",savingType);
+    query.bindValue(":stockname", stockname);
+
+
+    bool ok = query.exec();
+
+    if(ok){
+        if(query.next())
+            return query.value(0).toString();
+        else{
+            return QString();
+        }
+    }
+    else{
+        qInfo()<<query.lastError().text();
+    }
+
+    return QString();
+}
+
 QList<int> Database::getCurrencies(QString username)
 {
     if(!db.isOpen()) openDB();

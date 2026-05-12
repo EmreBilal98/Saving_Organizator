@@ -241,7 +241,7 @@
      <x>0</x>
      <y>0</y>
      <width>544</width>
-     <height>22</height>
+     <height>23</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuActions">
@@ -295,7 +295,10 @@
     <iconset theme="list-add"/>
    </property>
    <property name="text">
-    <string>Add Saving</string>
+    <string>Add Currency</string>
+   </property>
+   <property name="iconText">
+    <string>Add Currency</string>
    </property>
    <property name="menuRole">
     <enum>QAction::MenuRole::NoRole</enum>
@@ -306,7 +309,7 @@
     <iconset theme="list-remove"/>
    </property>
    <property name="text">
-    <string>Remove Saving</string>
+    <string>Remove Currency</string>
    </property>
    <property name="menuRole">
     <enum>QAction::MenuRole::NoRole</enum>
