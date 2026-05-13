@@ -226,7 +226,7 @@ void MainWindow::setModel2()
                 item->setText(QString::number(amount));
             }
             else if(column==2){
-                item->setText(QString::number((modelXAU.item(row,1)->text().toDouble())*XAUSellCheck()));
+                item->setText(QString::number((modelXAU.item(row,1)->text().toDouble())*XAUBuyCheck()));
             }
             else if(column==3){
                 item->setText(db.getValue(m_username,xau.toInt(),2,"cost"));
@@ -425,7 +425,7 @@ void MainWindow::on_actionRemove_Gold_triggered()
 
         double cost=0;
 
-        (dlg->getRemovedPrice()==-1)?cost=dlg->getRemovedAmount()*XAUSellCheck():cost=dlg->getRemovedPrice();
+        (dlg->getRemovedPrice()==-1)?cost=dlg->getRemovedAmount()*XAUBuyCheck():cost=dlg->getRemovedPrice();
         db.setValue(m_username,m_password,0,dlg->getRemovedAmount(),SUB,0,2,nullptr,cost);
 
         file->addLineToFile(QString("Gold"),dlg->getRemovedAmount(),
@@ -506,7 +506,7 @@ void MainWindow::on_actionMain_Page_triggered()
 
 void MainWindow::on_actionAdd_Gold_triggered()
 {
-    XAUprice=XAUBuyCheck();
+    XAUprice=XAUSellCheck();
     qInfo()<<"XAUprice:"<<XAUprice<<"\n\n\n";
     AddGoldDialog *dlg=new  AddGoldDialog(this);;
     dlg->exec();
