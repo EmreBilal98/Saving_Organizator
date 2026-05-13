@@ -46,7 +46,13 @@ void MainWindow::signUp()
 
 void MainWindow::init()
 {
-    //password lineEditlerine ggizli yazım modu verildi
+
+    // Kullanıcı adının sadece harf ve rakamlardan oluşmasını sağlar.
+    QRegularExpression rx("^[a-zA-Z0-9]+$");
+    QValidator *validator = new QRegularExpressionValidator(rx, this);
+    ui->lineEdit_suUsername->setValidator(validator);
+
+    //password lineEditlerine gizli yazım modu verildi
     ui->linePassword->setEchoMode(QLineEdit::Password);
     ui->lineEdit_suPass->setEchoMode(QLineEdit::Password);
     ui->lineEdit_suPassVerify->setEchoMode(QLineEdit::Password);
@@ -347,11 +353,32 @@ void MainWindow::enableActions(StackedWidgetIdex widgetIndex)
 
 void MainWindow::on_btnSignUp_clicked()
 {
+    //kullanıcı adı veya şifre boş mu kontrol eder
+    if (ui->lineEdit_suUsername->text().trimmed().isEmpty() || ui->lineEdit_suPass->text().isEmpty()) {
+       QMessageBox::critical(this,"username or password empty error","Your passwords or username is empty!!!");
+        return;
+    }
+
+    // En az 8 karakter, bir büyük harf ve bir rakam kontrolü
+    QRegularExpression re("^(?=.*[A-Z])(?=.*\\d).{8,}$");
+    if (!re.match(ui->lineEdit_suPass->text()).hasMatch()) {
+        QMessageBox::critical(this, "Weak Password", "password must contain at least 8 characters ,one uppercase ,one number!!!");
+        return;
+    }
+
+    //password ve verify aynı mı kontrol eder
     if(ui->lineEdit_suPass->text().compare(ui->lineEdit_suPassVerify->text())!=0){
         QMessageBox::critical(this,"password verification error","Your passwords different from each  other!!!");
         return;
     }
+
+    if (ui->lineEdit_suUsername->text().length() < 5) {
+        QMessageBox::critical(this,"username length error","Your username must contain at least 5 characters!!!");
+        return;
+    }
+
     int error;
+    //username'in daha önce kullanılmış olup olmadığını konntroll eder
     if(!db.createUser(ui->lineEdit_suUsername->text(),ui->lineEdit_suPass->text(),error))
     {
         errorExceptions(error);
