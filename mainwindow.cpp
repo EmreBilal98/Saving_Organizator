@@ -120,12 +120,20 @@ void MainWindow::errorExceptions(int &error)
 void MainWindow::setModel()
 {
     int row=0;
-    QList<int> zeroAmountList;
     qInfo()<<db.getCurrencies(m_username);
     if(db.getCurrencies(m_username).isEmpty()) return;
     prices=currencyCheck("TRY",Currency::currencyToStringList(db.getCurrencies(m_username)));
     qInfo()<<prices;
     foreach(QString key,prices.keys()){
+
+        bool control;
+        double amount = db.getValue(m_username, static_cast<int>(Currency::stringToCurrency(key)), 1, "SavingAmount").toDouble(&control);
+
+        if (!control || amount <= 0) {
+            qInfo() << key << " miktarı 0 veya geçersiz, atlanıyor.";
+            continue;
+        }
+
         for(int column = 0; column < 5; ++column) {
             QStandardItem *item = new QStandardItem();
             if(column==0){
@@ -133,23 +141,7 @@ void MainWindow::setModel()
                 qInfo()<<key<<":"<<prices.value(key);
             }
             else if(column==1){
-                bool control;
-                double amount=db.getValue(m_username,static_cast<int>(Currency::stringToCurrency(key)),1,"SavingAmount").toDouble(&control);
-                if(control){
-                    if (amount > 0) {
-                        qInfo()<<"amount ssıfırdan bbuyuk";
-                        item->setText(QString::number(amount));
-                    } else {
-                        qInfo()<<"amount ssıfırdan bbuyuk değill";
-                        zeroAmountList.append(row);
-                        continue;
-
-                    }
-                }
-                else{
-                    zeroAmountList.append(row);
-                    continue;
-                }
+                item->setText(QString::number(amount));
             }
             else if(column==2){
                 double TLBaseCurrency=1/prices.value(key);
@@ -171,16 +163,6 @@ void MainWindow::setModel()
         }
         row++;
     }
-
-    //sıfır miktarı kalann satırlar sil
-    foreach(int zrow,zeroAmountList){
-        if (zrow >= 0 && zrow< model.rowCount()) {
-            model.removeRow(zrow);
-        } else {
-            qWarning() << "Geçersiz satır numarası!";
-        }
-
-    }
 }
 
 void MainWindow::setModel2()
@@ -192,17 +174,26 @@ void MainWindow::setModel2()
     qInfo()<<"XAUs:"<<XAUs;
     int row=0;
     foreach (QString stock, exchanges) {
+
+        bool control;
+        double amount = db.getExchangeValue(m_username,stock,3,"SavingAmount").toDouble(&control);
+
+        if (!control || amount <= 0) {
+            qInfo() << stock << " miktarı 0 veya geçersiz, atlanıyor.";
+            continue;
+        }
+
         for(int column = 0; column < 5; ++column) {
             QStandardItem *item = new QStandardItem();
             if(column==0){
                 item->setText(stock);
             }
             else if(column==1){
-                item->setText(db.getExchangeValue(m_username,stock,3,"SavingAmount"));
+                item->setText(QString::number(amount));
             }
             else if(column==2){
                 qInfo()<<"amoount:"<<db.getExchangeValue(m_username,stock,3,"SavingAmount").toDouble()<<"value:"<<stockExchanges.value(stock);
-                item->setText(QString::number((db.getExchangeValue(m_username,stock,3,"SavingAmount").toDouble())*stockExchanges.value(stock)));
+                item->setText(QString::number((amount)*stockExchanges.value(stock)));
             }
             else if(column==3){
                 item->setText(db.getExchangeValue(m_username,stock,3,"cost"));
@@ -218,13 +209,21 @@ void MainWindow::setModel2()
     }
     row=0;
     foreach (QString xau, XAUs) {
+
+        bool control;
+        double amount = db.getValue(m_username,xau.toInt(),2,"SavingAmount").toDouble(&control);
+
+        if (!control || amount <= 0) {
+            qInfo() << xau << " miktarı 0 veya geçersiz, atlanıyor.";
+            continue;
+        }
         for(int column = 0; column < 5; ++column) {
             QStandardItem *item = new QStandardItem();
             if(column==0){
                 item->setText(Currency::XAUToString(static_cast<XAUtype>(xau.toInt())));
             }
             else if(column==1){
-                item->setText(db.getValue(m_username,xau.toInt(),2,"SavingAmount"));
+                item->setText(QString::number(amount));
             }
             else if(column==2){
                 item->setText(QString::number((modelXAU.item(row,1)->text().toDouble())*XAUSellCheck()));
