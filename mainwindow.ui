@@ -20,7 +20,7 @@
       <item>
        <widget class="QStackedWidget" name="stackedWidget">
         <property name="currentIndex">
-         <number>1</number>
+         <number>0</number>
         </property>
         <widget class="QWidget" name="page">
          <layout class="QVBoxLayout" name="verticalLayout_2">
@@ -263,8 +263,15 @@
     <addaction name="actionAccount_Activities"/>
     <addaction name="actionLog_Out"/>
    </widget>
+   <widget class="QMenu" name="menuHelp">
+    <property name="title">
+     <string>Help</string>
+    </property>
+    <addaction name="actionAttributes"/>
+   </widget>
    <addaction name="menuActions"/>
    <addaction name="menuAccount"/>
+   <addaction name="menuHelp"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
   <widget class="QToolBar" name="toolBar">
@@ -289,6 +296,8 @@
    <addaction name="actionMain_Page"/>
    <addaction name="actionAccount_Activities"/>
    <addaction name="actionLog_Out"/>
+   <addaction name="separator"/>
+   <addaction name="actionAttributes"/>
   </widget>
   <action name="actionAdd_Saving">
    <property name="icon">
@@ -390,6 +399,14 @@
    </property>
    <property name="menuRole">
     <enum>QAction::MenuRole::NoRole</enum>
+   </property>
+  </action>
+  <action name="actionAttributes">
+   <property name="icon">
+    <iconset theme="QIcon::ThemeIcon::HelpAbout"/>
+   </property>
+   <property name="text">
+    <string>Attributes</string>
    </property>
   </action>
  </widget>

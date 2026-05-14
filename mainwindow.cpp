@@ -33,13 +33,17 @@ void MainWindow::login()
 
         ui->stackedWidget->setCurrentIndex(USER);
     }
-    else
+    else{
+        ui->lineUsername->clear();
+        ui->linePassword->clear();
         QMessageBox::critical(this,"Log in error","Username or password wrong");
+    }
 }
 
 void MainWindow::signUp()
 {
-
+    ui->lineUsername->clear();
+    ui->linePassword->clear();
     ui->stackedWidget->setCurrentIndex(SIGNUP);
 
 }
@@ -58,11 +62,13 @@ void MainWindow::init()
     ui->lineEdit_suPassVerify->setEchoMode(QLineEdit::Password);
 
 
-    QPushButton *btn_login=new QPushButton("Log in",this);
-    QPushButton *btn_signUp=new QPushButton("Sign up",this);
+    QPushButton *btn_login=new QPushButton("Log In",this);
+    QPushButton *btn_signUp=new QPushButton("Sign Up",this);
 
     connect(btn_login,&QPushButton::clicked,this,&MainWindow::login);
     connect(btn_signUp,&QPushButton::clicked,this,&MainWindow::signUp);
+
+    connect(ui->actionAttributes, &QAction::triggered, this, &MainWindow::showAttributions);
 
     ui->buttonBox->addButton(btn_login,QDialogButtonBox::ButtonRole::ActionRole);
     ui->buttonBox->addButton(btn_signUp,QDialogButtonBox::ButtonRole::ActionRole);
@@ -107,10 +113,34 @@ void MainWindow::init()
     m_username.clear();
     m_password.clear();
 
+    ui->btnsuLogIn->setIcon(QIcon(":/saving_organizer_icons/log_in.png"));
+    ui->btnsuLogIn->setIconSize(QSize(24, 24));
+
+    btn_login->setIcon(QIcon(":/saving_organizer_icons/log_in.png"));
+    btn_login->setIconSize(QSize(24, 24));
+
+    ui->btnSignUp->setIcon(QIcon(":/saving_organizer_icons/sign_up.png"));
+    ui->btnSignUp->setIconSize(QSize(24, 24));
+
+    btn_signUp->setIcon(QIcon(":/saving_organizer_icons/sign_up.png"));
+    btn_signUp->setIconSize(QSize(24, 24));
+
     ui->stackedWidget->setCurrentIndex(LOGIN);
     on_stackedWidget_currentChanged(LOGIN);
-    //ui->actionAdd_Saving->setEnabled(false);
 
+
+    ui->toolBar->setIconSize(QSize(32, 32));
+
+    ui->actionAdd_Saving->setIcon(QIcon(":/saving_organizer_icons/add_currency.png"));
+    ui->actionRemove_Saving->setIcon(QIcon(":/saving_organizer_icons/remove_currency.png"));
+    ui->actionAdd_Gold->setIcon(QIcon(":/saving_organizer_icons/add_gold.png"));
+    ui->actionRemove_Gold->setIcon(QIcon(":/saving_organizer_icons/remove_gold.png"));
+    ui->actionadd_Exchange->setIcon(QIcon(":/saving_organizer_icons/add_stock.png"));
+    ui->actionRemove_exchange->setIcon(QIcon(":/saving_organizer_icons/remove_stock.png"));
+    ui->actionMain_Page->setIcon(QIcon(":/saving_organizer_icons/main_page.png"));
+    ui->actionAccount_Activities->setIcon(QIcon(":/saving_organizer_icons/account_activities.png"));
+    ui->actionLog_Out->setIcon(QIcon(":/saving_organizer_icons/log_out.png"));
+    ui->actionAttributes->setIcon(QIcon(":/saving_organizer_icons/help.png"));
 
 
 
@@ -559,6 +589,63 @@ void MainWindow::on_actionadd_Exchange_triggered()
                         dlg->getComment(),db.getStockValue(m_username,3,dlg->getStock(),"SavingAmount").toDouble(),ADD);
     setModel2();
 
+}
+
+void MainWindow::showAttributions()
+{
+    QMessageBox msgBox(this);
+    msgBox.setWindowTitle("Icon Attributions");
+
+    // HTML formatında metin hazırlıyoruz (Linklerin tıklanabilir olması için)
+    QString text = "<h3>Icon Credits & Attributions</h3>"
+                   "<p><b>Add and Remove Currency Icons</b> made by <a href='https://www.flaticon.com/authors/lanicon'>Lanicon</a> from <a href='https://www.flaticon.com'>www.flaticon.com</a></p>"
+
+                   "<p><a href='https://www.flaticon.com/free-icon/add-money_18969976?term=add+currency&page=1&position=30'>Add Currency</a></p>"
+
+                   "<p><a href='https://www.flaticon.com/free-icon/remove-money_18970105?term=remove+currency&page=1&position=2'>Remove Currency</a></p>"
+
+                   "<p><b>Add/Remove Gold and Stock Icons</b> made by <a href='https://www.flaticon.com/authors/afif-fudin'>afif fudin</a> from <a href='https://www.flaticon.com'>www.flaticon.com</a></p>"
+
+                   "<p><a href='https://www.flaticon.com/free-icon/gold_12024097?term=add+gold&page=1&position=12'>Add Gold</a></p>"
+
+                   "<p><a href='https://www.flaticon.com/free-icon/delete_11930997?term=remove+gold&page=1&position=5'>Remove Gold</a></p>"
+
+                   "<p><a href='https://www.flaticon.com/free-icon/add_12023857?term=add+graph&page=1&position=11'>Add Exchange</a></p>"
+
+                   "<p><a href='https://www.flaticon.com/free-icon/delete_11931027?term=remove+graph&page=1&position=60'>Remove Exchange</a></p>"
+
+                   "<p><b>Main Page Icon</b> made by <a href='https://www.flaticon.com/authors/dave-gandy'>Dave Gandy</a> from <a href='https://www.flaticon.com'>www.flaticon.com</a></p>"
+
+                   "<p><a href='https://www.flaticon.com/free-icon/home_25694?term=home&page=1&position=1'>Main Page</a></p>"
+
+                   "<p><b>Account Activities Icon</b> made by <a href='https://www.flaticon.com/authors/freepik'>Freepik</a> from <a href='https://www.flaticon.com'>www.flaticon.com</a></p>"
+
+                   "<p><a href='https://www.flaticon.com/free-icon/google-docs_2991106?term=documents&page=1&position=4'>Account Activities</a></p>"
+
+                   "<p><b>Log out Icon</b> made by <a href='https://www.flaticon.com/authors/sumberrejeki'>SumberRejeki</a> from <a href='https://www.flaticon.com'>www.flaticon.com</a></p>"
+
+                   "<p><a href='https://www.flaticon.com/free-icon/logout_4400629?term=log+out&page=1&position=5'>Log Out</a></p>"
+
+                   "<p><b>Log in Icon</b> made by <a href='https://www.flaticon.com/authors/omoonstd'>O.moonstd</a> from <a href='https://www.flaticon.com'>www.flaticon.com</a></p>"
+
+                   "<p><a href='https://www.flaticon.com/free-icon/log-in_17676985?term=log+in&page=1&position=47'>Log In</a></p>"
+
+                   "<p><b>Sign Up Icon</b> made by <a href='https://www.flaticon.com/authors/fathema-khanom'>Fathema Khanom</a> from <a href='https://www.flaticon.com'>www.flaticon.com</a></p>"
+
+                   "<p><a href='https://www.flaticon.com/free-icon/add-friend_9520040?term=sign+up'>Sign Up</a></p>"
+
+                   "<p><b>Help Icon</b> made by <a href='https://www.flaticon.com/authors/andy-horvath'>Andy Horvath</a> from <a href='https://www.flaticon.com'>www.flaticon.com</a></p>"
+
+                   "<p><a href='https://www.flaticon.com/free-icon/support_18902209?term=help&page=1&position=37'>Help</a></p>";
+
+    msgBox.setTextFormat(Qt::RichText);
+    msgBox.setText(text);
+    msgBox.setStandardButtons(QMessageBox::Ok);
+
+    // Linklerin tarayıcıda açılmasını sağlar
+    msgBox.setTextInteractionFlags(Qt::TextBrowserInteraction);
+
+    msgBox.exec();
 }
 
 

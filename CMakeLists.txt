@@ -32,6 +32,7 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         addexchangedialog.h addexchangedialog.cpp addexchangedialog.ui
         removegolddialog.h removegolddialog.cpp removegolddialog.ui
         removeexchangedialog.h removeexchangedialog.cpp removeexchangedialog.ui
+        icons.qrc
 
     )
 # Define target properties for Android with Qt 6 as:

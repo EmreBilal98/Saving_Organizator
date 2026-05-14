@@ -39,6 +39,7 @@ public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 private slots:
+    void showAttributions();
     void login();
     void signUp();
     void on_btnSignUp_clicked();
@@ -85,6 +86,7 @@ private:
     double XAUSellCheck();
     QMap <QString,double> stockExchangeCheck();
     void enableActions(StackedWidgetIdex widgetIndex);
+
 
 };
 #endif // MAINWINDOW_H

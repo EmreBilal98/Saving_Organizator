@@ -1,0 +1,16 @@
+<RCC>
+    <qresource prefix="/">
+        <file>saving_organizer_icons/add_currency.png</file>
+        <file>saving_organizer_icons/remove_currency.png</file>
+        <file>saving_organizer_icons/remove_gold.png</file>
+        <file>saving_organizer_icons/add_gold.png</file>
+        <file>saving_organizer_icons/add_stock.png</file>
+        <file>saving_organizer_icons/remove_stock.png</file>
+        <file>saving_organizer_icons/account_activities.png</file>
+        <file>saving_organizer_icons/sign_up.png</file>
+        <file>saving_organizer_icons/main_page.png</file>
+        <file>saving_organizer_icons/log_in.png</file>
+        <file>saving_organizer_icons/log_out.png</file>
+        <file>saving_organizer_icons/help.png</file>
+    </qresource>
+</RCC>
