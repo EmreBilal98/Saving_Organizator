@@ -64,4 +64,4 @@ qrc_*.cpp
 .qtc/
 
 #icons
-saving_organizer_icons
+saving_organizer_icons/
