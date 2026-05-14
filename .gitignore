@@ -63,3 +63,5 @@ qrc_*.cpp
 .qt/
 .qtc/
 
+#icons
+saving_organizer_icons

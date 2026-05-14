@@ -12,5 +12,6 @@
         <file>saving_organizer_icons/log_in.png</file>
         <file>saving_organizer_icons/log_out.png</file>
         <file>saving_organizer_icons/help.png</file>
+        <file>saving_organizer_icons/main.png</file>
     </qresource>
 </RCC>

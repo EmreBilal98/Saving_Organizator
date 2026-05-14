@@ -6,6 +6,10 @@ MainWindow::MainWindow(QWidget *parent)
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+
+    setWindowIcon(QIcon(":/saving_organizer_icons/main.png"));
+
+    setWindowTitle("Saving Organizator");
     init();
 }
 
