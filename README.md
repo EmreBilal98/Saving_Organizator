@@ -24,32 +24,32 @@
 ### 🔐 Kimlik Doğrulama
 Uygulama, her kullanıcının kendi verisini saklayabilmesi için güvenli bir giriş paneli sunar.
 
-| Kayıt Ol (Sign Up) | Giriş Yap (Login) | Oturumu Kapat (Log Out) |
-| :---: | :---: | :---: |
-| ![Sign Up](screenshots/signup.png) | ![Login](screenshots/login.png) | ![Log Out](screenshots/logout.png) |
+| Kayıt Ol (Sign Up) | Giriş Yap (Login) |
+| :---: | :---: |
+| ![Sign Up](screenshots/sign_up.png) | ![Login](screenshots/log_in.png) |
 
 ---
 
 ### 🖥️ Ana Ekran ve Yönetim Paneli
 Varlıklarınızı takip edebileceğiniz ve anlık değişimleri görebileceğiniz ana arayüz.
 
-![Ana Ekran](screenshots/main_screen.png)
+![Ana Ekran](screenshots/main_page.png)
 
 #### **Yatırım Ekleme & Silme Dialogları**
 Döviz, Altın ve BIST100 kategorileri için optimize edilmiş, not ekleme özellikli işlem pencereleri.
 
 | Yatırım Tipi | Ekleme (Add) | Silme (Delete) |
 | :--- | :---: | :---: |
-| **Döviz İşlemleri** | ![Currency Add](screenshots/currency_add.png) | ![Currency Delete](screenshots/currency_delete.png) |
-| **Altın İşlemleri** | ![Gold Add](screenshots/gold_add.png) | ![Gold Delete](screenshots/gold_delete.png) |
-| **BIST100 İşlemleri** | ![BIST Add](screenshots/bist_add.png) | ![BIST Delete](screenshots/bist_delete.png) |
+| **Döviz İşlemleri** | ![Currency Add](screenshots/add_currency.png) | ![Currency Delete](screenshots/remove_currency.png) |
+| **Altın İşlemleri** | ![Gold Add](screenshots/add_gold.png) | ![Gold Delete](screenshots/remove_gold.png) |
+| **BIST100 İşlemleri** | ![BIST Add](screenshots/add_stock.png) | ![BIST Delete](screenshots/remove_stock.png) |
 
 ---
 
 ### 📝 Hesap Hareketleri ve Geçmiş
 Tüm finansal geçmişinizi şık bir HTML tablo yapısında, işlem notlarınızla birlikte takip edin.
 
-![Hesap Hareketleri](screenshots/history.png)
+![Hesap Hareketleri](screenshots/account_activities.png)
 
 ---
 
