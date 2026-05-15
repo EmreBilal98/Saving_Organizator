@@ -350,13 +350,13 @@ QMap <QString,double> MainWindow::stockExchangeCheck()
     Currency *api=new Currency(this);
     QEventLoop loop;
     QObject::connect(api,&Currency::getStocks,api,[&myExchanges,&loop](QMap <QString,double> exchanges){
-        //qInfo()<<"get ici:"<<exchanges;
+        qInfo()<<"get ici:"<<exchanges;
         myExchanges=exchanges;
         loop.quit();
     });
     api->getExchangesData();
     loop.exec();
-    //qInfo()<<"get dışı:"<<myExchanges;
+    qInfo()<<"get dışı:"<<myExchanges;
     return myExchanges;
 }
 

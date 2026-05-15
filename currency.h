@@ -7,6 +7,7 @@
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QMap>
+#include <QFile>
 
 enum class CurrencyType {
     UNKNOWN=-1,

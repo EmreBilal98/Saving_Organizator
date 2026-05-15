@@ -93,31 +93,50 @@ void Currency::ExchangeReply(QNetworkReply *reply)
         return;
     }
 
-    // Sayfa içeriğini al
-    QString pageContent = reply->readAll();
-    QMap <QString,double> exchanges;
-    QRegularExpression re("<ul[^>]*class=\"live-stock-item[^>]*data-symbol=\"([^\"]+)\"");
-    QRegularExpressionMatchIterator i = re.globalMatch(pageContent);
+    QString pageContent = QString::fromUtf8(reply->readAll());
+    QMap<QString, double> exchanges;
 
-    while (i.hasNext()) {
-        QRegularExpressionMatch match = i.next();
+    // --- YENİ TABLO YAPISI İÇİN (180 KB'lık versiyon) ---
+    // Bu RegEx <tr data-symbol-id="AEFES"> yapısını yakalar
+    QRegularExpression tableRe("<tr[^>]*data-symbol-id=\"([^\"]+)\"");
+    QRegularExpressionMatchIterator iTable = tableRe.globalMatch(pageContent);
+
+    while (iTable.hasNext()) {
+        QRegularExpressionMatch match = iTable.next();
         QString symbol = match.captured(1);
-        //qDebug() << "Sembol:" << symbol;
 
-        // 2. Her symbol için son fiyatı al
-        QRegularExpression priceRe("<li[^>]*id=\"h_td_fiyat_id_" + symbol + "\"[^>]*>([^<]+)</li>");
-        QRegularExpressionMatch priceMatch = priceRe.match(pageContent);
+        // Bu sembolün satırı içindeki fiyatı bul (data-column="c" olan td)
+        // Örn: <td data-column="c" ...>19,8700</td>
+        QRegularExpression priceRe("<td[^>]*data-column=\"c\"[^>]*>([^<]+)</td>");
+
+        // Sadece o satırın devamındaki ilk fiyatı almak için sembolden sonraki kısmı tara
+        QRegularExpressionMatch priceMatch = priceRe.match(pageContent, match.capturedEnd());
 
         if (priceMatch.hasMatch()) {
             QString fiyat = priceMatch.captured(1).trimmed();
-            //qDebug() << symbol << ":" << fiyat;
-            exchanges.insert(symbol,fiyat.replace(",",".").toDouble());
-        } else {
-            qDebug() << symbol << ": fiyat bulunamadı";
+            exchanges.insert(symbol, fiyat.replace(",", ".").toDouble());
         }
-
     }
-    //qInfo()<<"getstockks:"<<exchanges;
+
+    // --- EĞER TABLO YAPISI BOŞSA ESKİ LİSTE YAPISINI DENE (337 KB'lık versiyon) ---
+    if (exchanges.isEmpty()) {
+        QRegularExpression listRe("data-symbol=\"([^\"]+)\"");
+        QRegularExpressionMatchIterator iList = listRe.globalMatch(pageContent);
+
+        while (iList.hasNext()) {
+            QRegularExpressionMatch match = iList.next();
+            QString symbol = match.captured(1);
+            QRegularExpression priceRe("id=\"h_td_fiyat_id_" + symbol + "\"[^>]*>([^<]+)</li>");
+            QRegularExpressionMatch priceMatch = priceRe.match(pageContent);
+
+            if (priceMatch.hasMatch()) {
+                QString fiyat = priceMatch.captured(1).trimmed();
+                exchanges.insert(symbol, fiyat.replace(",", ".").toDouble());
+            }
+        }
+    }
+
+    qInfo() << "Çekilen toplam veri adedi:" << exchanges.size();
     emit getStocks(exchanges);
 }
 
@@ -241,6 +260,10 @@ void Currency::getExchangesData()
 {
     QUrl url("https://bigpara.hurriyet.com.tr/borsa/canli-borsa/");
     QNetworkRequest request(url);
+
+    // Tarayıcı taklidi yapıyoruz
+    //request.setHeader(QNetworkRequest::UserAgentHeader, "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36");
+
     managerExchange.get(request);
 }
 
